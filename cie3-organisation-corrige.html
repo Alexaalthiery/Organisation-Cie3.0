@@ -1,0 +1,3876 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cie 3.0 — Organisation + Planning avancé</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #EDEEE4;
+      --bg-panel: #F7F7F1;
+      --ink: #221A2E;
+      --ink-soft: #5B5468;
+      --line: #D9D8CB;
+      --primary: #A5325C;
+      --primary-dark: #7E2647;
+      --teal: #2F7A6B;
+      --ochre: #B8842B;
+      --grey-status: #8A8578;
+      --danger: #B23A3A;
+    }
+    *{ box-sizing: border-box; }
+    html,body{ margin:0; padding:0; }
+    body{
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    h1,h2,h3{
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: 0.2px;
+    }
+    #root{ max-width: 1200px; margin: 0 auto; padding: 28px 20px 60px; }
+
+    .masthead{
+      display:flex; align-items:baseline; justify-content:space-between;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 14px; margin-bottom: 6px;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .masthead h1{ font-size: 30px; }
+    .masthead .tagline{ font-size: 13px; color: var(--ink-soft); font-style: italic; }
+
+    .tabs-wrapper{
+      display:flex;
+      align-items: center;
+      gap: 4px;
+      margin: 18px 0 28px;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+      padding-bottom: 2px;
+    }
+    .tabs-wrapper .tab-item{
+      display:flex;
+      align-items:center;
+      gap:4px;
+      background:none;
+      border:none;
+      cursor:pointer;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--ink-soft);
+      padding: 10px 8px 12px;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      position:relative;
+      transition: color 0.2s;
+    }
+    .tabs-wrapper .tab-item.active{
+      color: var(--ink);
+      border-bottom-color: var(--primary);
+      font-weight: 600;
+    }
+    .tabs-wrapper .tab-item .tab-actions{
+      display:inline-flex;
+      gap:2px;
+      margin-left:4px;
+      font-size:12px;
+      color:var(--ink-soft);
+    }
+    .tabs-wrapper .tab-item .tab-actions span{
+      cursor:pointer;
+      padding:0 3px;
+      border-radius:2px;
+      transition: background 0.2s;
+    }
+    .tabs-wrapper .tab-item .tab-actions span:hover{
+      background:var(--line);
+    }
+    .tabs-wrapper .tab-item .tab-actions .del-tab:hover{
+      color:var(--danger);
+    }
+    .tabs-wrapper .add-tab-btn{
+      background:none;
+      border:none;
+      cursor:pointer;
+      font-size:20px;
+      color:var(--ink-soft);
+      padding:4px 8px;
+      margin-left:4px;
+      line-height:1;
+      border-radius:3px;
+      transition: background 0.2s;
+    }
+    .tabs-wrapper .add-tab-btn:hover{
+      background:var(--line);
+    }
+    .tabs-wrapper .add-project-tab-btn{
+      background:none;
+      border:1px dashed var(--primary);
+      border-radius:3px;
+      cursor:pointer;
+      font-size:13px;
+      color:var(--primary);
+      padding:6px 12px;
+      margin-left:6px;
+      transition: background 0.2s;
+      white-space:nowrap;
+    }
+    .tabs-wrapper .add-project-tab-btn:hover{
+      background:var(--primary);
+      color:#fff;
+    }
+
+    .panel{ display:none; }
+    .panel.active{ display:block; }
+
+    .row-head{
+      display:flex; justify-content: space-between; align-items:center;
+      margin-bottom: 14px; gap: 12px; flex-wrap: wrap;
+    }
+    .row-head h2{ font-size: 21px; }
+    .count-tag{ color: var(--ink-soft); font-size: 13px; }
+
+    .btn{
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--ink); color: #fff; border: none;
+      padding: 9px 16px; border-radius: 3px; cursor: pointer;
+      font-size: 13.5px; font-weight: 500;
+    }
+    .btn:hover{ background: var(--primary-dark); }
+    .btn.secondary{
+      background: transparent; color: var(--ink); border: 1px solid var(--ink);
+    }
+    .btn.secondary:hover{ background: var(--ink); color:#fff; }
+    .btn.small{ padding: 5px 10px; font-size: 12.5px; }
+    .btn.danger{ background: var(--danger); }
+
+    .filters{ display:flex; gap:10px; margin-bottom: 16px; flex-wrap:wrap; align-items:center; }
+    select, input[type=text], input[type=date], input[type=number], input[type=time], textarea{
+      font-family: 'IBM Plex Sans', sans-serif;
+      border: 1px solid var(--line); border-radius: 3px;
+      padding: 7px 9px; font-size: 13.5px; background: #fff; color: var(--ink);
+    }
+    select{ cursor:pointer; }
+    textarea{ width:100%; resize: vertical; min-height: 50px; }
+
+    .form-card{
+      background: var(--bg-panel);
+      border: 1px solid var(--line);
+      padding: 18px; margin-bottom: 20px; border-radius: 4px;
+    }
+    .form-card h3{ font-size: 15px; margin-bottom: 12px; }
+    .form-grid{
+      display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px 14px; margin-bottom: 12px;
+    }
+    .form-grid label{
+      display:flex; flex-direction:column; gap:4px; font-size: 12.5px; color: var(--ink-soft);
+    }
+    .form-grid .full{ grid-column: 1 / -1; }
+    .form-actions{ display:flex; gap:8px; }
+
+    .list{ display:flex; flex-direction:column; }
+    .item{
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap: 14px; padding: 14px 4px; border-bottom: 1px solid var(--line);
+      border-left: 3px solid var(--grey-status); padding-left: 14px;
+    }
+    .item.status-a-contacter{ border-left-color: var(--grey-status); }
+    .item.status-en-cours{ border-left-color: var(--ochre); }
+    .item.status-obtenu{ border-left-color: var(--teal); }
+    .item.status-refuse{ border-left-color: var(--danger); }
+    .item.status-a-faire{ border-left-color: var(--grey-status); }
+    .item.status-en-cours-t{ border-left-color: var(--ochre); }
+    .item.status-fait{ border-left-color: var(--teal); }
+    .item.status-prevue{ border-left-color: var(--ochre); }
+    .item.status-realisee{ border-left-color: var(--teal); }
+    .item.status-annulee{ border-left-color: var(--danger); }
+    .item.status-sans-statut{ border-left-color: var(--grey-status); }
+
+    .item .main{ flex:1; min-width: 220px; }
+    .item .title{ font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+    .item .meta{ font-size: 12.5px; color: var(--ink-soft); display:flex; flex-wrap:wrap; gap: 4px 10px; margin-bottom: 4px; }
+    .item .desc{ font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+    .item .status-label{
+      font-size: 12px; font-weight: 600; text-transform: none;
+    }
+    .item .actions{ display:flex; gap:6px; flex-shrink:0; }
+
+    .empty{
+      padding: 40px 10px; text-align:center; color: var(--ink-soft);
+      border: 1px dashed var(--line); border-radius: 4px; font-size: 14px;
+    }
+
+    .stats-grid{
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+      gap: 14px; margin-bottom: 26px;
+    }
+    .stat{
+      border-left: 3px solid var(--primary); padding: 4px 0 4px 12px;
+    }
+    .stat .num{ font-family:'Fraunces',serif; font-size: 30px; font-weight: 600; line-height:1; }
+    .stat .label{ font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+
+    .bilan-section h3{ font-size: 16px; margin: 26px 0 10px; }
+    .quote-block{
+      font-style: italic; color: var(--ink-soft); font-size: 13.5px;
+      border-left: 2px solid var(--line); padding-left: 10px; margin: 6px 0;
+    }
+
+    .toast{
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 3px;
+      font-size: 13.5px; opacity: 0; pointer-events:none; transition: opacity .25s;
+      z-index: 50;
+    }
+    .toast.show{ opacity: 1; }
+
+    .members-list{ display:flex; flex-direction:column; gap: 10px; }
+    .member-row{
+      display:flex; justify-content:space-between; align-items:center;
+      padding: 10px 0; border-bottom: 1px solid var(--line);
+    }
+    .member-row .m-name{ font-weight:600; }
+    .member-row .m-role{ font-size: 12.5px; color: var(--ink-soft); }
+    .member-row .m-actions{ display:flex; gap:6px; }
+    .member-row .m-actions button{ font-size:12px; padding:2px 8px; }
+
+    .contact-fields-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      margin-top:6px;
+    }
+    .contact-fields-wrap .contact-row{
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+    .contact-fields-wrap .contact-row input{
+      flex:1;
+    }
+    .contact-fields-wrap .contact-row .remove-field{
+      background:none;
+      border:none;
+      color:var(--danger);
+      cursor:pointer;
+      font-size:16px;
+      line-height:1;
+    }
+    .add-contact-field{
+      background:none;
+      border:1px dashed var(--line);
+      border-radius:3px;
+      padding:4px 8px;
+      cursor:pointer;
+      font-size:12px;
+      color:var(--ink-soft);
+      margin-top:4px;
+      width:fit-content;
+    }
+    .add-contact-field:hover{
+      background:var(--line);
+    }
+
+    /* KANBAN */
+    .kanban-board{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:16px;
+      margin-top:10px;
+    }
+    .kanban-col{
+      background:var(--bg-panel);
+      border:1px solid var(--line);
+      border-radius:4px;
+      padding:10px;
+      min-height:200px;
+    }
+    .kanban-col h3{
+      font-size:15px;
+      text-align:center;
+      padding-bottom:8px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:10px;
+      color:var(--ink-soft);
+    }
+    .kanban-col .kanban-item{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:3px;
+      padding:8px 10px;
+      margin-bottom:6px;
+      cursor:grab;
+      font-size:13px;
+      transition:box-shadow 0.2s;
+    }
+    .kanban-col .kanban-item:hover{
+      box-shadow:0 2px 6px rgba(0,0,0,0.08);
+    }
+    .kanban-col .kanban-item.dragging{
+      opacity:0.4;
+    }
+    .kanban-col .kanban-item .k-title{
+      font-weight:600;
+    }
+    .kanban-col .kanban-item .k-meta{
+      font-size:11px;
+      color:var(--ink-soft);
+      margin-top:2px;
+    }
+    .kanban-col .kanban-empty{
+      color:var(--ink-soft);
+      font-style:italic;
+      font-size:13px;
+      text-align:center;
+      padding:20px 0;
+    }
+    .kanban-col.drag-over{
+      border-color:var(--primary);
+      background:#f5f0f2;
+    }
+
+    /* PLANNING ANNUEL LUN-DIM */
+    .planning-annual-wrapper{
+      margin-top:10px;
+    }
+    .planning-annual-wrapper .week-nav{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-bottom:16px;
+      flex-wrap:wrap;
+    }
+    .planning-annual-wrapper .week-nav .week-label{
+      font-weight:600;
+      font-size:16px;
+      min-width:220px;
+    }
+    .planning-annual-grid{
+      display:grid;
+      grid-template-columns: 100px repeat(7, 1fr);
+      gap:4px;
+      background:var(--bg-panel);
+      border:1px solid var(--line);
+      padding:8px;
+      border-radius:4px;
+      overflow-x:auto;
+    }
+    .planning-annual-grid .cell{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:3px;
+      padding:4px 6px;
+      min-height:60px;
+      font-size:12px;
+    }
+    .planning-annual-grid .cell-header{
+      background:transparent;
+      border:none;
+      font-weight:600;
+      color:var(--ink-soft);
+      min-height:auto;
+      padding:4px 2px;
+      text-align:center;
+    }
+    .planning-annual-grid .cell .day-date{
+      font-size:10px;
+      color:var(--ink-soft);
+      text-align:right;
+      margin-bottom:2px;
+    }
+    .planning-annual-grid .cell .slot{
+      background:#f0f0ea;
+      border-radius:3px;
+      padding:2px 4px;
+      margin-bottom:3px;
+      font-size:11px;
+      cursor:default;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      line-height:1.3;
+    }
+    .planning-annual-grid .cell .slot .remove{
+      color:var(--danger);
+      font-weight:bold;
+      margin-left:4px;
+      cursor:pointer;
+      font-size:11px;
+    }
+    .planning-annual-grid .cell .add-btn{
+      background:none;
+      border:1px dashed var(--line);
+      border-radius:3px;
+      color:var(--ink-soft);
+      font-size:10px;
+      padding:2px 4px;
+      width:100%;
+      cursor:pointer;
+      margin-top:2px;
+      text-align:center;
+    }
+    .planning-annual-grid .cell .add-btn:hover{
+      background:var(--line);
+    }
+    .planning-annual-grid .week-number{
+      font-weight:600;
+      font-size:13px;
+      color:var(--ink-soft);
+      text-align:center;
+      padding:4px 2px;
+    }
+
+    .planning-annual-grid .cell.weekend{
+      background:#f9f7f2;
+    }
+    .planning-annual-grid .cell-header.weekend{
+      background:transparent;
+    }
+
+    .planning-annual-grid .cell .slot .heure{
+      font-size:9px;
+      color:var(--ink-soft);
+      margin-left:4px;
+    }
+    .planning-annual-grid .cell .slot.multi-day{
+      background:#d4d4c8;
+      border-left:3px solid var(--primary);
+    }
+
+    .sub-tabs{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+      padding-bottom:4px;
+      border-bottom:1px solid var(--line);
+    }
+    .sub-tabs .sub-tab{
+      background:none;
+      border:none;
+      padding:6px 14px;
+      border-radius:20px;
+      cursor:pointer;
+      font-family:'IBM Plex Sans', sans-serif;
+      font-size:13.5px;
+      color:var(--ink-soft);
+      transition: all 0.2s;
+      border:1px solid transparent;
+    }
+    .sub-tabs .sub-tab:hover{
+      background:var(--bg-panel);
+      border-color:var(--line);
+    }
+    .sub-tabs .sub-tab.active{
+      background:var(--primary);
+      color:#fff;
+      border-color:var(--primary);
+    }
+
+    .member-tasks-section{
+      margin-top:30px;
+      padding-top:20px;
+      border-top:2px solid var(--line);
+    }
+    .member-tasks-section h3{
+      margin-bottom:12px;
+    }
+    .member-tasks-section .task-stats{
+      display:flex;
+      gap:16px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    .member-tasks-section .task-stats span{
+      background:var(--bg-panel);
+      padding:4px 12px;
+      border-radius:12px;
+      font-size:13px;
+      border:1px solid var(--line);
+    }
+    .task-stat-a-faire{ border-left:3px solid var(--grey-status); }
+    .task-stat-en-cours{ border-left:3px solid var(--ochre); }
+    .task-stat-fait{ border-left:3px solid var(--teal); }
+    .member-tasks-list .item{
+      margin-bottom:6px;
+      padding:8px 4px 8px 12px;
+    }
+    .member-tasks-list .item .title{
+      font-size:14px;
+    }
+    .member-tasks-list .item .meta{
+      font-size:11px;
+    }
+
+    .bilan-detailed{
+      margin-top:30px;
+      padding-top:20px;
+      border-top:2px solid var(--line);
+    }
+    .bilan-detailed .bilan-stats{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap:12px;
+      margin-bottom:20px;
+    }
+    .bilan-detailed .bilan-stat{
+      background:var(--bg-panel);
+      padding:12px 16px;
+      border-radius:4px;
+      border-left:4px solid var(--primary);
+    }
+    .bilan-detailed .bilan-stat .num{
+      font-family:'Fraunces',serif;
+      font-size:28px;
+      font-weight:600;
+    }
+    .bilan-detailed .bilan-stat .label{
+      font-size:13px;
+      color:var(--ink-soft);
+    }
+    .bilan-detailed table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+      margin-top:10px;
+    }
+    .bilan-detailed th{
+      text-align:left;
+      padding:6px 8px;
+      border-bottom:2px solid var(--line);
+      font-weight:600;
+    }
+    .bilan-detailed td{
+      padding:6px 8px;
+      border-bottom:1px solid var(--line);
+    }
+
+    @media (max-width: 800px){
+      .planning-annual-grid{
+        grid-template-columns: 60px repeat(7, 1fr);
+        font-size:11px;
+      }
+      .planning-annual-grid .cell{
+        min-height:50px;
+        padding:3px 4px;
+      }
+      .planning-annual-grid .cell .slot{
+        font-size:10px;
+        padding:1px 3px;
+      }
+    }
+    @media (max-width: 600px){
+      .kanban-board{
+        grid-template-columns: 1fr 1fr;
+      }
+      .planning-annual-grid{
+        grid-template-columns: 40px repeat(7, 1fr);
+        font-size:10px;
+      }
+      .planning-annual-grid .cell{
+        min-height:40px;
+        padding:2px 3px;
+      }
+      .planning-annual-grid .cell .slot{
+        font-size:9px;
+        padding:1px 2px;
+      }
+      .tabs-wrapper .tab-item{
+        font-size:13px;
+        padding:8px 4px 10px;
+      }
+    }
+    @media (max-width: 500px){
+      .kanban-board{
+        grid-template-columns: 1fr;
+      }
+    }
+      /* ---------- Ajouts : barre d'outils, indicateurs, composants ---------- */
+    #app-error-banner{
+      position: sticky; top: 0; z-index: 999;
+      background: var(--danger); color: #fff;
+      padding: 10px 14px; font-family: ui-monospace, monospace; font-size: 12.5px;
+      white-space: pre-wrap; display: flex; gap: 10px; align-items: flex-start;
+    }
+    #app-error-banner .err-text{ flex: 1; }
+    #app-error-banner .err-close{
+      background: rgba(255,255,255,0.2); border: none; color: #fff;
+      cursor: pointer; border-radius: 3px; padding: 2px 7px; font-size: 13px;
+    }
+
+    .masthead .mast-right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+    .toolbar{
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .toolbar .btn.tiny{ padding: 4px 9px; font-size: 12px; }
+
+    #save-indicator{
+      font-size: 12px; color: var(--ink-soft);
+      display:inline-flex; align-items:center; gap:6px;
+      padding: 3px 9px; border-radius: 999px; border:1px solid var(--line);
+      background: var(--bg-panel);
+    }
+    #save-indicator::before{
+      content:''; width:7px; height:7px; border-radius:50%;
+      background: var(--grey-status); flex-shrink:0;
+    }
+    #save-indicator.is-saved::before{ background: var(--teal); }
+    #save-indicator.is-pending::before{ background: var(--ochre); }
+    #save-indicator.is-error::before{ background: var(--danger); }
+    #save-indicator.is-error{ color: var(--danger); border-color: var(--danger); font-weight:600; }
+
+    #storage-note{
+      background: #FBF3DE; border:1px solid var(--ochre); color: #6B4E12;
+      padding: 8px 12px; border-radius: 4px; font-size: 12.5px; margin-top: 12px;
+    }
+
+    .section-sep{ border:none; border-top:1px solid var(--line); margin: 34px 0 24px; }
+
+    .row-head .head-right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+    .search-input{
+      flex: 1; min-width: 180px;
+      padding: 7px 10px; border:1px solid var(--line); border-radius:3px;
+      font-family: inherit; font-size: 13.5px; background:#fff; color: var(--ink);
+    }
+    .search-input:focus{ outline:2px solid var(--primary); outline-offset:1px; }
+
+    .pill{
+      display:inline-block; min-width: 17px; padding: 0 5px;
+      background: var(--line); color: var(--ink-soft);
+      border-radius: 999px; font-size: 11px; font-weight:600;
+      line-height: 17px; text-align:center; margin-left: 5px;
+    }
+    .sub-tab.active .pill{ background: var(--primary); color:#fff; }
+
+    .sub-tabs-sep{
+      display:inline-block; width:1px; align-self:stretch;
+      background: var(--line); margin: 0 5px;
+    }
+
+    .req{ color: var(--danger); font-weight:700; }
+    .hint{ font-size:12px; color: var(--ink-soft); }
+    .warn{ color: var(--danger); font-weight:600; }
+    .item.is-late{ background: #FDF6F6; }
+    .item .desc.note{ font-style: italic; }
+    .item .ville{ font-weight: 400; color: var(--ink-soft); }
+    .meta.spread{ gap: 18px; }
+
+    .field-legend{ font-weight:600; display:block; margin-bottom:6px; }
+    .checkbox-row{ display:flex; flex-wrap:wrap; gap:10px 16px; }
+    .checkbox-row .cb{
+      display:flex; align-items:center; gap:6px;
+      font-weight:normal; font-size:13.5px; cursor:pointer;
+    }
+    .inline-label{ display:flex; align-items:center; gap:6px; font-size:13.5px; }
+
+    .contacts .contact-line{ margin-bottom: 2px; }
+    .contacts .c-label{ font-weight:600; color: var(--ink); }
+
+    .count-tag.spaced{ display:block; margin-bottom:10px; }
+
+    /* Projets */
+    .projet-head{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:16px; flex-wrap:wrap; margin-bottom:16px;
+    }
+    .projet-actions{ display:flex; gap:6px; }
+    .progress-wrap{ display:flex; align-items:center; gap:10px; min-width:220px; flex:1; max-width:360px; }
+    .progress-bar{
+      flex:1; height:8px; background: var(--line);
+      border-radius:999px; overflow:hidden;
+    }
+    .progress-fill{ height:100%; background: var(--teal); transition: width .3s ease; }
+    .progress-label{ font-size:12px; color: var(--ink-soft); white-space:nowrap; }
+
+    .stats-grid.compact .stat{ padding: 12px 14px; }
+    .stats-grid.compact .stat .num{ font-size: 24px; }
+
+    /* Planning */
+    .planning-annual-grid .cell.is-today{ background: #FFF9E8; }
+    .planning-annual-grid .cell.is-today .day-date{ color: var(--primary); font-weight:700; }
+    .planning-annual-grid .cell .slot{ cursor:pointer; }
+    .week-nav .year-tag{ font-size:13px; color: var(--ink-soft); margin-left:6px; }
+
+    /* Kanban */
+    .kanban-col h3{ display:flex; align-items:center; justify-content:space-between; }
+    .kanban-item .k-move{
+      width:100%; margin-top:6px; font-size:11.5px; padding:3px 4px;
+      border:1px solid var(--line); border-radius:3px;
+      background: var(--bg-panel); color: var(--ink-soft); font-family: inherit;
+    }
+
+    /* Bilan */
+    .repartition{ display:flex; flex-direction:column; gap:6px; max-width:520px; }
+    .rep-row{ display:flex; align-items:center; gap:10px; font-size:13.5px; }
+    .rep-label{ min-width:110px; }
+    .rep-bar{ flex:1; height:9px; background: var(--line); border-radius:999px; overflow:hidden; }
+    .rep-fill{ display:block; height:100%; background: var(--primary); }
+    .rep-num{ min-width:24px; text-align:right; font-weight:600; }
+    .repartition-cols{ display:flex; gap:34px; flex-wrap:wrap; margin: 18px 0; }
+    .repartition-cols h4{ font-family:'Fraunces',serif; font-size:14px; margin:0 0 6px; }
+    .bilan-result h4{ font-family:'Fraunces',serif; font-size:16px; margin: 18px 0 12px; }
+    .table-wrap{ overflow-x:auto; margin-top: 14px; }
+
+    /* Membres */
+    .member-row.is-selected{
+      background: var(--bg-panel);
+      border-left:3px solid var(--primary);
+      padding-left: 10px;
+    }
+    .member-row .m-actions{ align-items:center; flex-wrap:wrap; }
+    .member-tasks-head{ margin-bottom:8px; }
+
+    @media (max-width: 640px){
+      .masthead{ flex-direction:column; align-items:flex-start; }
+      .row-head{ flex-direction:column; align-items:flex-start; gap:10px; }
+      .projet-head{ flex-direction:column; align-items:stretch; }
+      .progress-wrap{ max-width:none; }
+      .repartition-cols{ gap:18px; }
+    }
+
+  </style>
+</head>
+<body>
+<div id="root">
+  <header class="masthead">
+    <div>
+      <h1>Cie 3.0</h1>
+      <div class="tagline">Organisation + Planning</div>
+    </div>
+    <div class="mast-right">
+      <span id="save-indicator" role="status" aria-live="polite">Chargement…</span>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <button type="button" class="btn secondary tiny" data-action="force-save" title="Raccourci : Ctrl+S">Enregistrer</button>
+    <button type="button" class="btn secondary tiny" data-action="export-data">Exporter une sauvegarde</button>
+    <button type="button" class="btn secondary tiny" data-action="import-data">Importer une sauvegarde</button>
+    <input type="file" id="import-file" accept="application/json,.json" hidden
+           data-action="import-file-change" data-on="change">
+  </div>
+
+  <div id="storage-note" hidden></div>
+
+  <nav class="tabs-wrapper" id="tabsContainer" role="tablist" aria-label="Sections"></nav>
+
+  <main id="panelContainer"></main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const SEED_SALLES_REUNION = [
+  { 
+    nom: "LE SECHOIR", 
+    ville: "Saint-Leu",
+    contactFields: [
+      { label: "Direction - Lisa Patin", value: "direction@lesechoir.com - 0692 56 31 27" },
+      { label: "Programmation - Niv Rakotondrainibe", value: "programmation@lesechoir.com - 0692 97 97 47" },
+      { label: "Directeur technique - Florent Cillon", value: "directionteknik@lesechoir.com - 0692 41 15 20" },
+      { label: "Responsable action culturelle - Karen Leplomb", value: "public@lesechoir.com - 0692 04 08 53" },
+      { label: "Responsable communication - Laura Damour", value: "communication@lesechoir.com - 0692 87 78 00" }
+    ]
+  },
+  { 
+    nom: "LESPAS", 
+    ville: "Saint-Paul",
+    contactFields: [
+      { label: "Direction - David Picot", value: "direction@lespas.re - 0692 35 18 03 / 0262 59 39 66" },
+      { label: "Technique", value: "technique@lespas.re" },
+      { label: "Production", value: "production@lespas.re" }
+    ]
+  },
+  { 
+    nom: "TSA", 
+    ville: "Saint-Paul",
+    contactFields: [
+      { label: "Direction - Didier Ibao", value: "didier.direction@theatresouslesarbres.re" },
+      { label: "Direction - Valérie", value: "valerie.direction@theatresouslesarbres.re" }
+    ]
+  },
+  { 
+    nom: "LALANBIK", 
+    ville: "Saint-Pierre",
+    contactFields: [
+      { label: "Direction - Valérie Lafont", value: "valerie.lafont@lalanbik.re" },
+      { label: "Administration", value: "administration@lalanbik.re" }
+    ]
+  },
+  { 
+    nom: "GEORGES BRASSENS", 
+    ville: "Les Avirons",
+    contactFields: [
+      { label: "Direction - Miguy Payet", value: "payet.miguy@mairie-avirons.fr - 0262 38 13 40" }
+    ]
+  },
+  { 
+    nom: "LUC DONAT", 
+    ville: "Le Tampon",
+    contactFields: [
+      { label: "Direction - Eric Blanc Blanc", value: "blanc-blanc@theatrelucdonat.re" },
+      { label: "Production - Frédéric Abraham", value: "production@theatrelucdonat.re - 0692 79 01 24" },
+      { label: "Administrateur - Thibault Gramont", value: "thibault.gramont@theatrelucdonat.re - 0692 82 55 33" },
+      { label: "Directeur technique - Dany Clavier", value: "dany.clavier@theatrelucdonat.re - 0692 48 80 74" },
+      { label: "Responsable action culturelle - Myrose Gigant", value: "myrose.gigant@theatrelucdonat.re - 0692 45 23 06" }
+    ]
+  },
+  { 
+    nom: "THEATRE DES SABLES", 
+    ville: "L'Étang-Salé",
+    contactFields: [
+      { label: "Programmation - Julie Bernardi", value: "julie.bernardi@theatredessables.re / julie.bernardi@letang sale.fr - 0262 26 50 97" }
+    ]
+  },
+  { 
+    nom: "CAFÉ ET LAMBREQUIN", 
+    ville: "Entre-Deux",
+    contactFields: [
+      { label: "Gestion - Ayhem Belly", value: "spectacles@entredeux.re - 0692 96 23 08 / 0262 39 86 04" }
+    ]
+  },
+  { 
+    nom: "LES BAMBOUS", 
+    ville: "Saint-Benoît",
+    contactFields: [
+      { label: "Direction - Anabel Martinez", value: "direction@lesbambous.re - 0693 97 16 51" },
+      { label: "Assistante direction - Linda Molly", value: "assistante-direction@lesbambous.re - 0692 53 30 58" },
+      { label: "Administratrice - Lindsay Pollux", value: "administration@lesbambous.re" },
+      { label: "Directeur technique - Jean-François Carpaye", value: "direction-technique@lesbambous.re - 0692 77 13 47" },
+      { label: "Responsable communication - Jean-Rémy Moulouma", value: "communication@lesbambous.re" },
+      { label: "Responsable action culturelle - Josée Madou", value: "public@lesbambous.re" }
+    ]
+  },
+  { 
+    nom: "TEAT", 
+    ville: "Saint-Denis",
+    contactFields: [
+      { label: "Direction - Thierry Boyer", value: "tboyer@teat.re" },
+      { label: "Administrateur - Teddy Djamoi", value: "tdjamoi@teat.re" },
+      { label: "Directrice de production - Christiane Benard", value: "cbenard@teat.re" }
+    ]
+  },
+  { 
+    nom: "CDNOI", 
+    ville: "Saint-Denis",
+    contactFields: [
+      { label: "Direction - Lolita Tergemina", value: "lolita.tergemina@cdnoi.re" },
+      { label: "Directeur adjoint - David Vercey Laithier", value: "david.verceylaithier@cdnoi.re - 0692 07 82 82" },
+      { label: "Production - Nicolas Laurent", value: "production@cdnoi.re" },
+      { label: "Directeur technique - Sylvain Dedieu", value: "sylvain.dedieu@cdnoi.re" }
+    ]
+  },
+  { 
+    nom: "CANTER", 
+    ville: "Saint-Denis",
+    contactFields: [
+      { label: "Direction - Catherine Pey", value: "catherine.bonte@crous-reunion.fr / Catherine.pey@crous-reunionmayotte.fr" },
+      { label: "Secrétariat", value: "secretariat.canter@crous-reunion.fr" }
+    ]
+  }
+];
+
+const SEED_SALLES_METROPOLE = [
+  { 
+    nom: "Cratère Surfaces", 
+    ville: "Alès",
+    contactFields: [
+      { label: "Direction - Olivier Lataste", value: "info@lecratere.fr - 04 66 52 52 64" },
+      { label: "Administration - Stéphanie Ortis", value: "administration - via 04 66 52 52 64" },
+      { label: "Production / Accueil pro - Paco Bialek", value: "paco.bialek@cratere-surfaces.com - 06 82 52 11 67" },
+      { label: "Communication - Géraldine Elie", value: "geraldine.elie@lecratere.fr" },
+      { label: "Technique - Bastien Courthieu", value: "directeur technique - 04 66 52 52 64" }
+    ]
+  },
+  { 
+    nom: "Chalon dans la rue", 
+    ville: "Chalon-sur-Saône",
+    contactFields: [
+      { label: "Direction - Nathalie Cixous", value: "nathalie.cixous@chalondanslarue.com" },
+      { label: "Administration - Chloé Bousquet", value: "administration@chalondanslarue.com" },
+      { label: "Production - Laurent Gentelet", value: "laurent.gentelet@chalondanslarue.com" },
+      { label: "Communication", value: "" },
+      { label: "Technique - Katia Mozet Floreani", value: "directrice technique du festival" }
+    ]
+  },
+  { 
+    nom: "ECLAT / Festival d'Aurillac", 
+    ville: "Aurillac",
+    contactFields: [
+      { label: "Direction - Frédéric Remy", value: "eclat@aurillac.net - 04 71 43 43 70" },
+      { label: "Administration / Production - Gaëlle Audebet", value: "attachée à l'administration et à la production" },
+      { label: "Production", value: "" },
+      { label: "Communication - Laura Ignace", value: "responsable communication et relations publiques" },
+      { label: "Technique - Cédric Ginouvès", value: "directeur technique" }
+    ]
+  },
+  { 
+    nom: "Viva Cité", 
+    ville: "Sotteville-lès-Rouen",
+    contactFields: [
+      { label: "Direction artistique - Anne Le Goff", value: "directrice de l'Atelier 231, organisateur du festival - info@atelier231.fr" },
+      { label: "Administration - Samuel Mazure", value: "responsable de l'administration et de la comptabilité" },
+      { label: "Production", value: "" },
+      { label: "Communication", value: "" },
+      { label: "Technique - Christophe Mouchere", value: "régisseur" }
+    ]
+  },
+  { 
+    nom: "Festival en Bastides", 
+    ville: "Villefranche-de-Rouergue",
+    contactFields: [
+      { label: "Direction", value: "" },
+      { label: "Administration - Espaces Culturels Villefranchois / ATP", value: "espacesculturels@wanadoo.fr - 05 65 45 76 74" },
+      { label: "Production", value: "" },
+      { label: "Communication", value: "" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "Les tentaculaires", 
+    ville: "Amiens",
+    contactFields: [
+      { label: "Direction - Yannick Javaudin", value: "directeur général du Cirque Jules Verne, organisateur - contact@cirquejulesverne.fr" },
+      { label: "Administration - Christelle Voulminot", value: "directrice administrative et financière" },
+      { label: "Production - Geoffray Berriot", value: "chargé de production" },
+      { label: "Communication - Cécile Duval", value: "responsable communication et RP" },
+      { label: "Technique - Sébastien Leplain (dir. Gavroche)", value: "régisseur général - 03 22 35 40 41" }
+    ]
+  },
+  { 
+    nom: "Atelier 231", 
+    ville: "Sotteville-lès-Rouen",
+    contactFields: [
+      { label: "Direction - Anne Le Goff", value: "info@atelier231.fr - 02 35 62 60 70" },
+      { label: "Administration - Samuel Mazure", value: "responsable de l'administration et de la comptabilité" },
+      { label: "Production", value: "" },
+      { label: "Communication", value: "" },
+      { label: "Technique - Christophe Mouchere", value: "régisseur" }
+    ]
+  },
+  { 
+    nom: "Les Ateliers Frappaz", 
+    ville: "Villeurbanne",
+    contactFields: [
+      { label: "Direction - Nadège Prugnard", value: "" },
+      { label: "Administration - Christophe Paris-Marty", value: "administration@ateliers-frappaz.com" },
+      { label: "Production", value: "" },
+      { label: "Communication - Clara Grisot", value: "communication@ateliers-frappaz.com" },
+      { label: "Technique - Eric Grosso", value: "eric.grosso@ateliers-frappaz.com - 04 72 68 09 87" }
+    ]
+  },
+  { 
+    nom: "Le Boulon", 
+    ville: "Vieux-Condé",
+    contactFields: [
+      { label: "Direction - Virginie Foucault", value: "bonjour@leboulon.fr - 03 27 20 35 40" },
+      { label: "Administration - Laetitia Brion", value: "" },
+      { label: "Production", value: "" },
+      { label: "Communication - Romain Carlier", value: "" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "Le citron jaune", 
+    ville: "Port-Saint-Louis-du-Rhône",
+    contactFields: [
+      { label: "Direction - Compagnie Ilotopie", value: "30 avenue Max Dormoy - 04 42 48 40 04" },
+      { label: "Administration", value: "" },
+      { label: "Production", value: "" },
+      { label: "Communication", value: "" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "Le Fourneau", 
+    ville: "Brest",
+    contactFields: [
+      { label: "Direction - Caroline Raffin", value: "11 quai de la Douane - 02 98 46 19 46" },
+      { label: "Administration - Antoine Zettel", value: "directeur administratif et financier" },
+      { label: "Production - Juliette Le Corre", value: "juliette.lecorre@lefourneau.com" },
+      { label: "Communication", value: "" },
+      { label: "Technique - Maël Palu / Jacquemine Geffrault", value: "régisseurs généraux" }
+    ]
+  },
+  { 
+    nom: "Lieux Publics", 
+    ville: "Marseille",
+    contactFields: [
+      { label: "Direction - Alexis Nys", value: "accueil@lieuxpublics.com - 04 91 03 81 28" },
+      { label: "Administration - Franck Guille", value: "" },
+      { label: "Production", value: "" },
+      { label: "Communication - Benjamin Lengagne", value: "directeur de la communication et des publics" },
+      { label: "Technique", value: "poste en cours de recrutement (2024)" }
+    ]
+  },
+  { 
+    nom: "Le moulin fondu / Compagnie Opposito", 
+    ville: "Garges-lès-Gonesse",
+    contactFields: [
+      { label: "Direction artistique - Jean-Raymond Jacob", value: "contact@oposito.fr - 01 80 96 16 30" },
+      { label: "Administration - Cécile Leroy", value: "" },
+      { label: "Production - Léo Martinez", value: "adjoint de direction / production" },
+      { label: "Communication - Andréa Roberto", value: "responsable médiation et communication" },
+      { label: "Technique - Véronique Charbit", value: "directrice technique" }
+    ]
+  },
+  { 
+    nom: "Pronomades en Haute Garonne", 
+    ville: "Encausse-les-Thermes",
+    contactFields: [
+      { label: "Direction - Philippe Saunier-Borrell", value: "accueil@pronomades.org - 05 61 79 95 50" },
+      { label: "Administration - Stéphanie Brun", value: "" },
+      { label: "Production", value: "" },
+      { label: "Communication - Margo Tamizé", value: "chargée de communication et RP" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "Quelques p'arts", 
+    ville: "Boulieu-lès-Annonay",
+    contactFields: [
+      { label: "Direction - Palmira Picòn", value: "04 75 67 56 05" },
+      { label: "Administration - Diane Ribouillard", value: "administration@quelquesparts.fr" },
+      { label: "Production", value: "" },
+      { label: "Communication - Lucile Marino", value: "chargée de communication" },
+      { label: "Technique - Alexandre Arnaud", value: "technique@quelquesparts.fr" }
+    ]
+  },
+  { 
+    nom: "Sur le Pont", 
+    ville: "La Rochelle",
+    contactFields: [
+      { label: "Direction - Bruno de Beaufort", value: "direction@cnarsurlepont.fr" },
+      { label: "Administration - Cécile Bourbon", value: "administration@cnarsurlepont.fr" },
+      { label: "Production - Mathilde Gavard", value: "production@cnarsurlepont.fr" },
+      { label: "Communication - Anna Guillou", value: "communication@cnarsurlepont.fr - 07 75 75 16 00" },
+      { label: "Technique - Thomas Baudoin", value: "regiegenerale@cnarsurlepont.fr" }
+    ]
+  },
+  { 
+    nom: "L'usine", 
+    ville: "Tournefeuille",
+    contactFields: [
+      { label: "Direction - Sébastien Roux", value: "direction@lusine.net" },
+      { label: "Administration - Pauline Blanc", value: "pauline@lusine.net" },
+      { label: "Production - Charles Bodin", value: "charles@lusine.net" },
+      { label: "Communication - Bahija Kibou", value: "communication@lusine.net - 05 61 07 45 18" },
+      { label: "Technique - Vincent Chabaud", value: "vincent@lusine.net" }
+    ]
+  },
+  { 
+    nom: "Rebonds", 
+    ville: "Nantes",
+    contactFields: [
+      { label: "Coordination - Alice Houssais (assoc. InterStices)", value: "contact@interstices.pro" },
+      { label: "Administration", value: "" },
+      { label: "Production", value: "" },
+      { label: "Communication", value: "" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "Urbaka", 
+    ville: "Limoges",
+    contactFields: [
+      { label: "Direction", value: "" },
+      { label: "Administration - Olivia Sabatier", value: "administration@urbaka.com - 05 55 32 08 42" },
+      { label: "Production", value: "" },
+      { label: "Communication", value: "" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "Les transversales", 
+    ville: "Lognes",
+    contactFields: [
+      { label: "Organisation - Ville de Lognes, Direction Culture-Animation", value: "aucun contact nominatif public trouvé" },
+      { label: "Administration", value: "" },
+      { label: "Production", value: "" },
+      { label: "Communication", value: "" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "Complètement Gaga", 
+    ville: "Saint-Étienne",
+    contactFields: [
+      { label: "Co-présidence - Alexis Burlot / Barbara Ribeiro", value: "festival.completementgaga@gmail.com" },
+      { label: "Administration", value: "" },
+      { label: "Production", value: "" },
+      { label: "Communication", value: "" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "FAR", 
+    ville: "Bressuire",
+    contactFields: [
+      { label: "Organisation - Service Culturel, Ville de Bressuire", value: "service.culturel@ville-bressuire.fr - 05 49 80 49 40" },
+      { label: "Administration", value: "" },
+      { label: "Production", value: "" },
+      { label: "Communication", value: "" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "Festival des 7 collines", 
+    ville: "Saint-Étienne",
+    contactFields: [
+      { label: "Direction - Jean-Philippe Mirandon", value: "septcollines@hotmail.com - 04 77 21 90 44" },
+      { label: "Administration - Claire Crova", value: "assistante administration et programmation" },
+      { label: "Production", value: "" },
+      { label: "Communication - Françoise Sarlin / Alice Lacouture", value: "relations presse / relations publiques" },
+      { label: "Technique - Arnaud Olivier", value: "régie technique" }
+    ]
+  },
+  { 
+    nom: "Le Plongeoir", 
+    ville: "Le Mans",
+    contactFields: [
+      { label: "Direction - Richard Fournier", value: "02 43 47 45 54" },
+      { label: "Administration - Caroline Forveille", value: "responsable du pôle administration" },
+      { label: "Production", value: "" },
+      { label: "Communication - Mélinda Devanne", value: "communication@leplongeoir-cirque.fr" },
+      { label: "Technique", value: "" }
+    ]
+  },
+  { 
+    nom: "CCN Nantes", 
+    ville: "Nantes",
+    contactFields: [
+      { label: "Direction - Salia Sanou", value: "contact@ccnn.fr - 02 40 93 30 97" },
+      { label: "Administration - Nicolas Chantebel", value: "responsable administratif" },
+      { label: "Production - Alexandra Leroux", value: "chargée de production" },
+      { label: "Communication - Anttar Tehami", value: "responsable communication et relations médias" },
+      { label: "Technique - Bertrand Reveret", value: "directeur technique" }
+    ]
+  }
+];
+
+/* ==========================================================
+   CIE 3.0 — Organisation + Planning
+   Noyau : état, persistance, utilitaires, délégation d'événements
+   ========================================================== */
+'use strict';
+
+const SHARED = true;
+const STORAGE_KEY = 'cie3-app-state';
+
+let STATE = {
+  taches: [], salles: [], activites: [], membres: [],
+  projets: [], tabs: [], meta: {}
+};
+let loaded = false;
+
+/* ---------- Bandeau d'erreur ---------- */
+function showErrorBanner(msg){
+  let banner = document.getElementById('app-error-banner');
+  if(!banner){
+    banner = document.createElement('div');
+    banner.id = 'app-error-banner';
+    banner.setAttribute('role', 'alert');
+    banner.innerHTML = '<span class="err-text"></span><button type="button" class="err-close" aria-label="Masquer">✕</button>';
+    document.body.insertBefore(banner, document.body.firstChild);
+    banner.querySelector('.err-close').addEventListener('click', ()=> banner.remove());
+  }
+  banner.querySelector('.err-text').textContent = 'Erreur : ' + msg;
+}
+
+window.addEventListener('error', function(e){
+  const msg = (e.error && e.error.stack) ? e.error.stack : (e.message || 'erreur inconnue');
+  showErrorBanner(msg + (e.filename ? (' (' + e.filename + ':' + e.lineno + ':' + e.colno + ')') : ''));
+});
+window.addEventListener('unhandledrejection', function(e){
+  const reason = e.reason;
+  showErrorBanner('promesse rejetée : ' + ((reason && reason.stack) ? reason.stack : String(reason)));
+});
+
+/* ---------- Projets et onglets par défaut ---------- */
+const DEFAULT_PROJECTS = ['Tanbour Dantel', 'Apoïo', '90°', 'Quai n°2', '21 // Sud', 'nēbula'];
+
+const DEFAULT_TABS = [
+  { id: 'taches',        label: 'Tâches + Planning', removable: false },
+  { id: 'projets',       label: 'Projets',           removable: false },
+  { id: 'lieux',         label: 'Lieux',             removable: false },
+  { id: 'kanban-salles', label: 'Kanban Salles',     removable: true  },
+  { id: 'activites',     label: 'Activités',         removable: true  },
+  { id: 'bilan',         label: 'Bilan',             removable: true  },
+  { id: 'membres',       label: 'Membres',           removable: true  }
+];
+
+const BUILTIN_TAB_IDS = DEFAULT_TABS.map(t => t.id);
+
+/* ---------- Utilitaires ---------- */
+function cryptoId(){
+  if(window.crypto && window.crypto.randomUUID) return 'id-' + window.crypto.randomUUID().slice(0, 12);
+  return 'id-' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+}
+
+function slugify(str){
+  return String(str).toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function esc(s){
+  if(s === undefined || s === null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function toLocalDateStr(date){
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,'0');
+  const d = String(date.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+
+function formatDate(iso){
+  if(!iso) return '';
+  const parts = String(iso).split('-');
+  if(parts.length !== 3) return iso;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+function getWeekNumber(d){
+  const date = new Date(d);
+  date.setHours(0,0,0,0);
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  const week1 = new Date(date.getFullYear(), 0, 4);
+  return 1 + Math.round(((date - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+/** Durée "2:00" ou "2h30" ou "90" (minutes) -> minutes */
+function dureeEnMinutes(str){
+  if(!str) return 0;
+  const s = String(str).trim().replace(',', '.');
+  let m = s.match(/^(\d+)\s*[:hH]\s*(\d+)?$/);
+  if(m) return parseInt(m[1],10)*60 + (parseInt(m[2],10) || 0);
+  m = s.match(/^(\d+(?:\.\d+)?)\s*h$/i);
+  if(m) return Math.round(parseFloat(m[1])*60);
+  m = s.match(/^(\d+)$/);
+  if(m) return parseInt(m[1],10);
+  return 0;
+}
+
+function formatMinutes(total){
+  const h = Math.floor(total/60);
+  const m = total % 60;
+  if(h && m) return `${h}h${String(m).padStart(2,'0')}`;
+  if(h) return `${h}h`;
+  return `${m}min`;
+}
+
+function membreOptions(selected){
+  let opts = '<option value="">—</option>';
+  STATE.membres.forEach(m=>{
+    const name = memberName(m);
+    opts += `<option value="${esc(name)}" ${selected===name?'selected':''}>${esc(name)}</option>`;
+  });
+  return opts;
+}
+
+function memberName(m){
+  return [m.prenom, m.nom].filter(Boolean).join(' ').trim();
+}
+
+function projetsList(){
+  return Array.isArray(STATE.projets) && STATE.projets.length ? STATE.projets : [];
+}
+
+/** Tous les projets connus : ceux déclarés + ceux référencés par des tâches. */
+function allProjects(){
+  return [...new Set([ ...projetsList(), ...STATE.taches.map(t => t.projet).filter(Boolean) ])];
+}
+
+function statusClass(prefix, statut){
+  if(prefix === 'tache'){
+    if(statut === 'En cours') return 'status-en-cours-t';
+    if(statut === 'À faire')  return 'status-a-faire';
+    if(statut === 'Fait')     return 'status-fait';
+    return '';
+  }
+  const map = {
+    'A contacter':'status-a-contacter', 'En cours':'status-en-cours',
+    'Obtenu':'status-obtenu', 'Refusé':'status-refuse',
+    'Prévue':'status-prevue', 'Réalisée':'status-realisee', 'Annulée':'status-annulee'
+  };
+  return map[statut] || 'status-sans-statut';
+}
+
+/* ---------- Toast ---------- */
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+/* ---------- Confirmation ---------- */
+function confirmAction(message){
+  return window.confirm(message);
+}
+
+/* ==========================================================
+   PERSISTANCE
+   Trois niveaux : stockage cloud de l'artefact -> localStorage -> mémoire.
+   ========================================================== */
+const HAS_CLOUD_STORAGE = (typeof window !== 'undefined' && window.storage && typeof window.storage.get === 'function');
+let STORAGE_MODE = HAS_CLOUD_STORAGE ? 'cloud' : 'local';
+let storageHealthy = true;
+
+const SEED = {
+  membres: [
+    { id: cryptoId(), prenom:"Edith",   nom:"Chateau",  role:"Responsable artistique, chorégraphe" },
+    { id: cryptoId(), prenom:"Mary",    nom:"Fouillet", role:"Administratrice de production" },
+    { id: cryptoId(), prenom:"Alexa",   nom:"Althiery", role:"Chorégraphe, interprète" },
+    { id: cryptoId(), prenom:"Aurélie", nom:"Fontaine", role:"Chargée de production" }
+  ],
+  salles: [],
+  activites: [],
+  taches: [],
+  projets: [...DEFAULT_PROJECTS],
+  tabs: DEFAULT_TABS.map(t => ({ ...t })),
+  meta: { seedSallesImportees: false, sallesSupprimees: [], version: 2 }
+};
+
+function emptyState(){
+  return JSON.parse(JSON.stringify(SEED));
+}
+
+async function loadState(){
+  let raw = null;
+  try{
+    if(HAS_CLOUD_STORAGE){
+      const r = await window.storage.get(STORAGE_KEY, SHARED);
+      raw = r && r.value ? r.value : null;
+    }
+  }catch(e){
+    // Clé absente au premier lancement : ce n'est pas une anomalie.
+    raw = null;
+  }
+
+  if(raw === null){
+    try{
+      raw = window.localStorage ? window.localStorage.getItem(STORAGE_KEY) : null;
+      if(raw && HAS_CLOUD_STORAGE) STORAGE_MODE = 'cloud';
+    }catch(e){ raw = null; }
+  }
+
+  if(raw){
+    try{
+      const parsed = JSON.parse(raw);
+      STATE = Object.assign(emptyState(), parsed);
+    }catch(e){
+      showErrorBanner("Sauvegarde illisible, données par défaut chargées. L'ancienne sauvegarde n'a pas été écrasée.");
+      STATE = emptyState();
+    }
+  } else {
+    STATE = emptyState();
+  }
+
+  migrate();
+  loaded = true;
+}
+
+/** Migrations et normalisation — idempotent. */
+function migrate(){
+  STATE.meta = STATE.meta || {};
+  if(!Array.isArray(STATE.meta.sallesSupprimees)) STATE.meta.sallesSupprimees = [];
+
+  ['taches','salles','activites','membres','projets','tabs'].forEach(k=>{
+    if(!Array.isArray(STATE[k])) STATE[k] = [];
+  });
+
+  // Projets : récupère l'ancienne liste codée en dur au premier chargement.
+  if(STATE.projets.length === 0) STATE.projets = [...DEFAULT_PROJECTS];
+
+  // Membres : identifiants stables.
+  STATE.membres.forEach(m => { if(!m.id) m.id = cryptoId(); });
+
+  // Salles : anciens champs de contact -> contactFields.
+  STATE.salles.forEach(s=>{
+    if(!s.id) s.id = cryptoId();
+    if(s.contactFields === undefined){
+      const fields = [];
+      ['contactDirecteur','contactProduction','contactAdministration','contactCommunication','contactTechnique'].forEach(k=>{
+        if(s[k]){ fields.push({ label: k.replace('contact',''), value: s[k] }); delete s[k]; }
+      });
+      s.contactFields = fields;
+    }
+    if(!Array.isArray(s.contactFields)) s.contactFields = [];
+    if(!s.categorie) s.categorie = 'reunion';
+    if(s.statut === undefined) s.statut = '';
+    if(!Array.isArray(s.projets)) s.projets = [];
+  });
+
+  // Tâches : identifiants et champs manquants.
+  STATE.taches.forEach(t=>{
+    if(!t.id) t.id = cryptoId();
+    if(t.statut === undefined) t.statut = 'À faire';
+    if(t.priorite === undefined) t.priorite = 'Moyenne';
+    ['description','commentaire','dateLimite','responsable','projet'].forEach(k=>{
+      if(t[k] === undefined) t[k] = '';
+    });
+  });
+
+  // Activités : champs ajoutés au fil des versions.
+  STATE.activites.forEach(a=>{
+    if(!a.id) a.id = cryptoId();
+    ['heureDebut','heureFin','dateFin','lieuCustom','partenaires','fonctionne','difficultes','notes','duree','responsable'].forEach(k=>{
+      if(a[k] === undefined) a[k] = '';
+    });
+    if(a.lieuType === undefined) a.lieuType = 'autre';
+    if(a.statut === undefined) a.statut = 'Prévue';
+    if(!a.annee && a.date) a.annee = String(a.date).slice(0,4);
+  });
+
+  // Import unique des salles pré-remplies. Une salle supprimée reste supprimée.
+  importSeedSallesUneFois();
+
+  // Onglets : complète les onglets natifs manquants sans détruire les onglets personnalisés.
+  if(STATE.tabs.length === 0){
+    STATE.tabs = DEFAULT_TABS.map(t => ({ ...t }));
+  } else {
+    STATE.tabs = STATE.tabs.filter(t => t && t.id && !String(t.id).startsWith('projet-') &&
+      !['salles-reunion','salles-metropole','etablissements-scolaires'].includes(t.id));
+    DEFAULT_TABS.forEach(def=>{
+      if(!STATE.tabs.some(t => t.id === def.id)) STATE.tabs.push({ ...def });
+    });
+  }
+  // Les deux premiers onglets restent non supprimables.
+  STATE.tabs.forEach(t=>{
+    const def = DEFAULT_TABS.find(d => d.id === t.id);
+    if(def) t.removable = def.removable;
+    else if(t.removable === undefined) t.removable = true;
+  });
+}
+
+function importSeedSallesUneFois(){
+  const supprimees = new Set(STATE.meta.sallesSupprimees);
+  const cle = (nom, cat) => cat + '::' + nom;
+  let ajoutees = 0;
+
+  const ajouter = (seedList, categorie) => {
+    if(typeof seedList === 'undefined') return;
+    seedList.forEach(seed=>{
+      const k = cle(seed.nom, categorie);
+      if(supprimees.has(k)) return;
+      const existe = STATE.salles.some(s => s.nom === seed.nom && s.categorie === categorie);
+      if(existe) return;
+      STATE.salles.push({
+        id: cryptoId(), nom: seed.nom, ville: seed.ville || '',
+        contactFields: (seed.contactFields || []).map(f => ({ ...f })),
+        statut: '', prochaineAction: '', dateRelance: '', responsable: '',
+        categorie, projets: [], seed: true
+      });
+      ajoutees++;
+    });
+  };
+
+  if(!STATE.meta.seedSallesImportees){
+    ajouter(typeof SEED_SALLES_REUNION   !== 'undefined' ? SEED_SALLES_REUNION   : [], 'reunion');
+    ajouter(typeof SEED_SALLES_METROPOLE !== 'undefined' ? SEED_SALLES_METROPOLE : [], 'metropole');
+    STATE.meta.seedSallesImportees = true;
+    if(ajoutees) scheduleSave();
+  }
+}
+
+/* ---------- Écriture ---------- */
+let saveTimer = null;
+let savePending = false;
+
+/** Sauvegarde différée : regroupe les écritures rapprochées. */
+function scheduleSave(){
+  savePending = true;
+  updateSaveIndicator('pending');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=> { saveState(); }, 400);
+}
+
+async function saveState(){
+  clearTimeout(saveTimer);
+  const payload = JSON.stringify(STATE);
+  let ok = false;
+
+  if(HAS_CLOUD_STORAGE){
+    try{
+      await window.storage.set(STORAGE_KEY, payload, SHARED);
+      ok = true;
+    }catch(e){
+      ok = false;
+    }
+  }
+
+  // Copie locale systématique : filet de sécurité si le stockage cloud échoue.
+  try{
+    if(window.localStorage){
+      window.localStorage.setItem(STORAGE_KEY, payload);
+      ok = true;
+    }
+  }catch(e){ /* quota dépassé ou stockage bloqué */ }
+
+  savePending = false;
+  storageHealthy = ok;
+  if(ok){
+    STATE.meta.derniereSauvegarde = new Date().toISOString();
+    updateSaveIndicator('saved');
+  } else {
+    updateSaveIndicator('error');
+    showToast("Sauvegarde impossible — exportez vos données par sécurité");
+  }
+  return ok;
+}
+
+function updateSaveIndicator(status){
+  const el = document.getElementById('save-indicator');
+  if(!el) return;
+  el.classList.remove('is-pending','is-saved','is-error');
+  if(status === 'pending'){
+    el.classList.add('is-pending');
+    el.textContent = 'Enregistrement…';
+  } else if(status === 'saved'){
+    el.classList.add('is-saved');
+    const mode = HAS_CLOUD_STORAGE ? 'partagé' : 'ce navigateur';
+    el.textContent = `Enregistré (${mode}) · ${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}`;
+  } else {
+    el.classList.add('is-error');
+    el.textContent = 'Non enregistré !';
+  }
+}
+
+// Dernier filet : sauvegarde synchrone avant fermeture de l'onglet.
+window.addEventListener('beforeunload', function(){
+  if(savePending){
+    try{
+      if(window.localStorage) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
+    }catch(e){}
+  }
+});
+
+/* ---------- Export / import ---------- */
+function exporterDonnees(){
+  const blob = new Blob([JSON.stringify(STATE, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cie3-sauvegarde-${toLocalDateStr(new Date())}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
+  showToast('Sauvegarde téléchargée');
+}
+
+function importerDonnees(file){
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try{
+      const parsed = JSON.parse(reader.result);
+      if(typeof parsed !== 'object' || parsed === null) throw new Error('format invalide');
+      if(!confirmAction("Remplacer toutes les données actuelles par le contenu de ce fichier ?")) return;
+      STATE = Object.assign(emptyState(), parsed);
+      migrate();
+      await saveState();
+      showToast('Données importées');
+      rebuildPanels();
+      renderTabs();
+      renderPanelContent(activeTabId);
+    }catch(e){
+      showToast('Fichier illisible — import annulé');
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ==========================================================
+   DÉLÉGATION D'ÉVÉNEMENTS
+   Un seul écouteur pour toute l'application. Les éléments déclarent
+   leur intention via data-action, ce qui survit à n'importe quel
+   re-rendu : plus de gestionnaires perdus quand le DOM est remplacé.
+   ========================================================== */
+const actions = Object.create(null);
+
+function registerAction(name, handler){ actions[name] = handler; }
+
+function handleDelegated(e, type){
+  const el = e.target.closest(`[data-action][data-on="${type}"], [data-action]:not([data-on])`);
+  if(!el) return;
+  const name = el.dataset.action;
+  const handler = actions[name];
+  if(!handler) return;
+  const expected = el.dataset.on || 'click';
+  if(expected !== type) return;
+  e.preventDefault();
+  e.stopPropagation();
+  try{
+    handler(el, e);
+  }catch(err){
+    showErrorBanner((err && err.stack) ? err.stack : String(err));
+  }
+}
+
+document.addEventListener('click',  e => handleDelegated(e, 'click'));
+document.addEventListener('change', e => handleDelegated(e, 'change'));
+document.addEventListener('input',  e => handleDelegated(e, 'input'));
+
+// Raccourci clavier : Ctrl/Cmd + S force une sauvegarde immédiate.
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){
+    e.preventDefault();
+    saveState().then(ok => { if(ok) showToast('Enregistré'); });
+  }
+});
+
+/* ---------- Helpers de rendu ---------- */
+/** Remplace le contenu d'un élément. Les actions étant déléguées,
+ *  aucun gestionnaire n'est perdu. */
+function mount(el, html){
+  if(!el) return null;
+  el.innerHTML = html;
+  return el;
+}
+
+function byId(id){ return document.getElementById(id); }
+
+function panelIsActive(id){
+  const p = byId(id);
+  return !!(p && p.classList.contains('active'));
+}
+
+/* ==========================================================
+   ONGLETS
+   ========================================================== */
+let activeTabId = 'taches';
+
+function renderTabs(){
+  const container = byId('tabsContainer');
+  if(!container) return;
+
+  let html = '';
+  STATE.tabs.forEach(tab => {
+    const active = tab.id === activeTabId;
+    html += `<button type="button" class="tab-item ${active ? 'active' : ''}"
+      role="tab" aria-selected="${active}" aria-controls="${esc(tab.id)}"
+      data-action="switch-tab" data-tabid="${esc(tab.id)}">
+      ${esc(tab.label)}
+      <span class="tab-actions">
+        <span role="button" tabindex="0" class="rename-tab" title="Renommer l'onglet"
+              data-action="rename-tab" data-tabid="${esc(tab.id)}">✎</span>
+        ${tab.removable !== false
+          ? `<span role="button" tabindex="0" class="del-tab" title="Supprimer l'onglet"
+                   data-action="delete-tab" data-tabid="${esc(tab.id)}">✕</span>`
+          : ''}
+      </span>
+    </button>`;
+  });
+
+  html += `<button type="button" class="add-tab-btn" title="Ajouter un onglet vide" data-action="add-tab">+</button>`;
+  mount(container, html);
+}
+
+registerAction('switch-tab', el => switchTab(el.dataset.tabid));
+
+registerAction('rename-tab', el => {
+  const tab = STATE.tabs.find(t => t.id === el.dataset.tabid);
+  if(!tab) return;
+  const newLabel = prompt("Nouveau nom de l'onglet :", tab.label);
+  if(newLabel && newLabel.trim()){
+    tab.label = newLabel.trim();
+    scheduleSave();
+    renderTabs();
+  }
+});
+
+registerAction('delete-tab', el => {
+  const tabId = el.dataset.tabid;
+  const tab = STATE.tabs.find(t => t.id === tabId);
+  if(!tab) return;
+  if(tab.removable === false){ showToast("Cet onglet ne peut pas être supprimé"); return; }
+  if(!confirmAction(`Supprimer l'onglet « ${tab.label} » ?\nLes données (tâches, lieux, activités) sont conservées.`)) return;
+
+  const panelEl = byId(tabId);
+  if(panelEl) panelEl.remove();
+  STATE.tabs = STATE.tabs.filter(t => t.id !== tabId);
+  scheduleSave();
+  if(activeTabId === tabId && STATE.tabs.length) activeTabId = STATE.tabs[0].id;
+  renderTabs();
+  switchTab(activeTabId);
+});
+
+registerAction('add-tab', () => {
+  const label = prompt("Nom du nouvel onglet :");
+  if(!label || !label.trim()) return;
+  const id = 'tab-' + cryptoId();
+  STATE.tabs.push({ id, label: label.trim(), removable: true, custom: true });
+  scheduleSave();
+  ensurePanel(id);
+  renderTabs();
+  switchTab(id);
+});
+
+function ensurePanel(id){
+  let panel = byId(id);
+  if(!panel){
+    panel = document.createElement('div');
+    panel.id = id;
+    panel.className = 'panel';
+    panel.setAttribute('role', 'tabpanel');
+    byId('panelContainer').appendChild(panel);
+  }
+  return panel;
+}
+
+function rebuildPanels(){
+  const container = byId('panelContainer');
+  if(!container) return;
+  container.innerHTML = '';
+  STATE.tabs.forEach(tab => ensurePanel(tab.id));
+  if(!STATE.tabs.some(t => t.id === activeTabId) && STATE.tabs.length){
+    activeTabId = STATE.tabs[0].id;
+  }
+  const active = byId(activeTabId);
+  if(active) active.classList.add('active');
+}
+
+function switchTab(tabId){
+  if(!tabId) return;
+  activeTabId = tabId;
+  document.querySelectorAll('.tab-item').forEach(b => {
+    const on = b.dataset.tabid === tabId;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', String(on));
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const panel = ensurePanel(tabId);
+  panel.classList.add('active');
+  renderPanelContent(tabId);
+
+  // Mémorise l'onglet courant pour le retrouver à la prochaine ouverture.
+  if(loaded && STATE.meta && STATE.meta.dernierOnglet !== tabId){
+    STATE.meta.dernierOnglet = tabId;
+    scheduleSave();
+  }
+}
+
+function renderPanelContent(tabId){
+  switch(tabId){
+    case 'taches':        return renderTachesAccueil();
+    case 'projets':       return renderProjets();
+    case 'lieux':         return renderLieux();
+    case 'kanban-salles': return renderKanbanSalles();
+    case 'activites':     return renderActivites();
+    case 'bilan':         return renderBilan();
+    case 'membres':       return renderMembres();
+    default: {
+      const panel = byId(tabId);
+      const tab = STATE.tabs.find(t => t.id === tabId);
+      if(panel && !panel.innerHTML.trim()){
+        mount(panel, `
+          <div class="row-head"><h2>${esc(tab ? tab.label : 'Nouvel onglet')}</h2></div>
+          <div class="empty">Cet onglet est vide. Utilisez-le comme bloc-notes libre.</div>
+          <div class="form-card">
+            <label class="full">Notes
+              <textarea id="notes-${esc(tabId)}" rows="10" placeholder="Notes libres…"
+                data-action="save-tab-notes" data-on="input" data-tabid="${esc(tabId)}">${esc(tab && tab.notes ? tab.notes : '')}</textarea>
+            </label>
+          </div>
+        `);
+      }
+    }
+  }
+}
+
+registerAction('save-tab-notes', el => {
+  const tab = STATE.tabs.find(t => t.id === el.dataset.tabid);
+  if(!tab) return;
+  tab.notes = el.value;
+  scheduleSave();
+});
+
+/* ---------- Barre d'outils (export / import / sauvegarde) ---------- */
+registerAction('export-data', () => exporterDonnees());
+
+registerAction('import-data', () => {
+  const input = byId('import-file');
+  if(input) input.click();
+});
+
+registerAction('import-file-change', el => {
+  const file = el.files && el.files[0];
+  if(file) importerDonnees(file);
+  el.value = '';
+});
+
+registerAction('force-save', async () => {
+  const ok = await saveState();
+  showToast(ok ? 'Enregistré' : "Échec de l'enregistrement");
+});
+
+/* ==========================================================
+   TÂCHES
+   Un même moteur sert l'accueil (toutes les tâches) et la vue par projet.
+   ========================================================== */
+const tacheUI = {
+  statut: 'Toutes',
+  projet: 'Tous',
+  membre: 'Tous',
+  recherche: '',
+  // Formulaire ouvert : null, 'new', ou l'identifiant de la tâche en cours d'édition.
+  formOuvert: null,
+  // Contexte du formulaire, pour re-rendre le bon panneau.
+  formPanel: null
+};
+
+function renderTachesAccueil(){
+  const el = byId('taches');
+  if(!el) return;
+
+  mount(el, `
+    <div id="taches-content"></div>
+    <hr class="section-sep">
+    <div id="planning-embed"></div>
+  `);
+
+  renderTachesScope(null, byId('taches-content'), 'taches');
+  renderPlanningAnnual(byId('planning-embed'));
+}
+
+function renderTachesScope(scope, el, panelId){
+  if(!el) return;
+
+  const recherche = tacheUI.recherche.toLowerCase().trim();
+  const projets = allProjects();
+
+  let filtered = STATE.taches.filter(t => {
+    if(scope !== null && t.projet !== scope) return false;
+    if(scope === null && tacheUI.projet !== 'Tous' && t.projet !== tacheUI.projet) return false;
+    if(tacheUI.membre !== 'Tous' && t.responsable !== tacheUI.membre) return false;
+    if(tacheUI.statut !== 'Toutes' && t.statut !== tacheUI.statut) return false;
+    if(recherche){
+      const foin = [t.tache, t.description, t.commentaire, t.projet, t.responsable]
+        .filter(Boolean).join(' ').toLowerCase();
+      if(!foin.includes(recherche)) return false;
+    }
+    return true;
+  });
+
+  // Tri : non terminées d'abord, puis par échéance croissante.
+  const rangStatut = s => (s === 'Fait' ? 1 : 0);
+  filtered.sort((a,b)=>{
+    const r = rangStatut(a.statut) - rangStatut(b.statut);
+    if(r !== 0) return r;
+    return (a.dateLimite || '9999-99-99').localeCompare(b.dateLimite || '9999-99-99');
+  });
+
+  const total = scope === null ? STATE.taches.length : STATE.taches.filter(t => t.projet === scope).length;
+  const enRetard = filtered.filter(t => estEnRetard(t)).length;
+
+  const projetOptions = ['Tous', ...projets]
+    .map(p => `<option value="${esc(p)}" ${tacheUI.projet===p?'selected':''}>${esc(p)}</option>`).join('');
+  const membreOpts = ['Tous', ...STATE.membres.map(memberName)]
+    .map(m => `<option value="${esc(m)}" ${tacheUI.membre===m?'selected':''}>${esc(m)}</option>`).join('');
+  const statutOpts = ['Toutes','À faire','En cours','Fait']
+    .map(s => `<option value="${esc(s)}" ${tacheUI.statut===s?'selected':''}>${s}</option>`).join('');
+
+  mount(el, `
+    <div class="row-head">
+      <h2>${scope === null ? 'Tâches' : esc(scope)}</h2>
+      <div class="head-right">
+        <span class="count-tag">${filtered.length} / ${total} affichée(s)${enRetard ? ` · <span class="warn">${enRetard} en retard</span>` : ''}</span>
+        <button type="button" class="btn" data-action="tache-new" data-scope="${esc(scope || '')}" data-panel="${esc(panelId)}">+ Nouvelle tâche</button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <input type="search" class="search-input" placeholder="Rechercher une tâche…"
+             value="${esc(tacheUI.recherche)}" aria-label="Rechercher une tâche"
+             data-action="tache-filter-search" data-on="input"
+             data-scope="${esc(scope || '')}" data-panel="${esc(panelId)}">
+      <select aria-label="Filtrer par statut" data-action="tache-filter-statut" data-on="change"
+              data-scope="${esc(scope || '')}" data-panel="${esc(panelId)}">${statutOpts}</select>
+      ${scope === null ? `
+      <select aria-label="Filtrer par projet" data-action="tache-filter-projet" data-on="change"
+              data-scope="" data-panel="${esc(panelId)}">${projetOptions}</select>` : ''}
+      <select aria-label="Filtrer par responsable" data-action="tache-filter-membre" data-on="change"
+              data-scope="${esc(scope || '')}" data-panel="${esc(panelId)}">${membreOpts}</select>
+      ${(tacheUI.statut!=='Toutes'||tacheUI.projet!=='Tous'||tacheUI.membre!=='Tous'||tacheUI.recherche)
+        ? `<button type="button" class="btn small secondary" data-action="tache-filter-reset"
+             data-scope="${esc(scope || '')}" data-panel="${esc(panelId)}">Réinitialiser</button>` : ''}
+    </div>
+
+    <div id="tache-form-slot-${esc(panelId)}"></div>
+
+    <div class="list" id="tache-list-${esc(panelId)}">
+      ${filtered.length
+        ? filtered.map(t => tacheItemHtml(t, scope, panelId)).join('')
+        : `<div class="empty">${total === 0 ? "Aucune tâche pour l'instant. Créez-en une avec « + Nouvelle tâche »." : "Aucune tâche ne correspond à ces filtres."}</div>`}
+    </div>
+  `);
+
+  // Réaffiche le formulaire s'il était ouvert dans ce panneau.
+  if(tacheUI.formOuvert && tacheUI.formPanel === panelId){
+    const existing = tacheUI.formOuvert === 'new'
+      ? null
+      : STATE.taches.find(t => t.id === tacheUI.formOuvert);
+    if(tacheUI.formOuvert === 'new' || existing){
+      openTacheForm(existing, scope, panelId, true);
+    } else {
+      tacheUI.formOuvert = null;
+    }
+  }
+}
+
+function estEnRetard(t){
+  if(!t.dateLimite || t.statut === 'Fait') return false;
+  return t.dateLimite < toLocalDateStr(new Date());
+}
+
+function tacheItemHtml(t, scope, panelId){
+  const retard = estEnRetard(t);
+  const scopeAttr = `data-id="${esc(t.id)}" data-scope="${esc(scope || '')}" data-panel="${esc(panelId)}"`;
+  return `
+    <div class="item ${statusClass('tache', t.statut)} ${retard ? 'is-late' : ''}">
+      <div class="main">
+        <div class="title">${esc(t.tache)}</div>
+        <div class="meta">
+          ${t.dateLimite ? `<span class="${retard ? 'warn' : ''}">Échéance : ${formatDate(t.dateLimite)}${retard ? ' ⚠' : ''}</span>` : ''}
+          ${t.responsable ? `<span>Responsable : ${esc(t.responsable)}</span>` : ''}
+          ${t.projet ? `<span>Projet : ${esc(t.projet)}</span>` : ''}
+          ${t.priorite ? `<span>Priorité : ${esc(t.priorite)}</span>` : ''}
+          <span class="status-label">${esc(t.statut)}</span>
+        </div>
+        ${t.description ? `<div class="desc">${esc(t.description)}</div>` : ''}
+        ${t.commentaire ? `<div class="desc note">💬 ${esc(t.commentaire)}</div>` : ''}
+      </div>
+      <div class="actions">
+        <button type="button" class="btn small secondary" data-action="tache-toggle" ${scopeAttr}>${t.statut==='Fait' ? 'Rouvrir' : 'Marquer fait'}</button>
+        <button type="button" class="btn small secondary" data-action="tache-edit" ${scopeAttr}>Modifier</button>
+        <button type="button" class="btn small danger" data-action="tache-delete" ${scopeAttr}>Suppr.</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- Formulaire ---------- */
+function openTacheForm(existing, scope, panelId, dejaOuvert){
+  const slot = byId('tache-form-slot-' + panelId);
+  if(!slot) return;
+
+  if(!dejaOuvert){
+    tacheUI.formOuvert = existing ? existing.id : 'new';
+    tacheUI.formPanel = panelId;
+  }
+
+  const t = existing || {
+    tache:'', description:'', commentaire:'', dateLimite:'',
+    responsable:'', priorite:'Moyenne', statut:'À faire',
+    projet: scope || ''
+  };
+
+  const projectOptions = ['', ...allProjects()].map(p => {
+    const label = p || '— Aucun —';
+    return `<option value="${esc(p)}" ${(t.projet || '') === p ? 'selected' : ''}>${esc(label)}</option>`;
+  }).join('');
+
+  mount(slot, `
+    <div class="form-card">
+      <h3>${existing ? 'Modifier la tâche' : 'Nouvelle tâche'}</h3>
+      <div class="form-grid">
+        <label class="full">Tâche <span class="req">*</span>
+          <input type="text" id="f-tache" value="${esc(t.tache)}" placeholder="Ex : Réserver la salle" required>
+        </label>
+        <label class="full">Description
+          <textarea id="f-description" rows="2" placeholder="Détails">${esc(t.description)}</textarea>
+        </label>
+        <label class="full">Commentaire
+          <textarea id="f-commentaire" rows="2" placeholder="Suivi, échanges, précisions…">${esc(t.commentaire)}</textarea>
+        </label>
+        <label>Date limite
+          <input type="date" id="f-date-limite" value="${esc(t.dateLimite)}">
+        </label>
+        <label>Responsable
+          <select id="f-responsable">${membreOptions(t.responsable)}</select>
+        </label>
+        <label>Projet
+          <select id="f-projet">${projectOptions}</select>
+        </label>
+        <label>Priorité
+          <select id="f-priorite">
+            ${['Basse','Moyenne','Haute'].map(p=>`<option ${t.priorite===p?'selected':''}>${p}</option>`).join('')}
+          </select>
+        </label>
+        <label>Statut
+          <select id="f-statut">
+            ${['À faire','En cours','Fait'].map(s=>`<option ${t.statut===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </label>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn" data-action="tache-save"
+          data-id="${esc(existing ? existing.id : '')}" data-scope="${esc(scope || '')}" data-panel="${esc(panelId)}">Enregistrer</button>
+        <button type="button" class="btn secondary" data-action="tache-cancel"
+          data-scope="${esc(scope || '')}" data-panel="${esc(panelId)}">Annuler</button>
+      </div>
+    </div>
+  `);
+
+  const first = slot.querySelector('#f-tache');
+  if(first && !dejaOuvert) first.focus();
+}
+
+/** Re-rend le panneau de tâches concerné, et rafraîchit les vues liées. */
+function refreshTaches(scope, panelId){
+  if(panelId === 'taches'){
+    const c = byId('taches-content');
+    if(c) renderTachesScope(null, c, 'taches');
+  } else {
+    const c = byId('projet-taches-content');
+    if(c) renderTachesScope(scope || null, c, panelId);
+  }
+  if(panelIsActive('membres')) renderMembres();
+}
+
+/* ---------- Actions ---------- */
+function ctx(el){
+  return { scope: el.dataset.scope || null, panel: el.dataset.panel || 'taches' };
+}
+
+registerAction('tache-new', el => {
+  const { scope, panel } = ctx(el);
+  openTacheForm(null, scope, panel);
+});
+
+registerAction('tache-edit', el => {
+  const { scope, panel } = ctx(el);
+  const t = STATE.taches.find(x => x.id === el.dataset.id);
+  if(t) openTacheForm(t, scope, panel);
+});
+
+registerAction('tache-cancel', el => {
+  const { scope, panel } = ctx(el);
+  tacheUI.formOuvert = null;
+  tacheUI.formPanel = null;
+  const slot = byId('tache-form-slot-' + panel);
+  if(slot) slot.innerHTML = '';
+  refreshTaches(scope, panel);
+});
+
+registerAction('tache-save', el => {
+  const { scope, panel } = ctx(el);
+  const val = {
+    tache:       byId('f-tache').value.trim(),
+    description: byId('f-description').value.trim(),
+    commentaire: byId('f-commentaire').value.trim(),
+    dateLimite:  byId('f-date-limite').value,
+    responsable: byId('f-responsable').value,
+    projet:      byId('f-projet').value,
+    priorite:    byId('f-priorite').value,
+    statut:      byId('f-statut').value
+  };
+  if(!val.tache){ showToast("Donnez un nom à la tâche"); byId('f-tache').focus(); return; }
+
+  const existing = el.dataset.id ? STATE.taches.find(x => x.id === el.dataset.id) : null;
+  if(existing){
+    Object.assign(existing, val);
+  } else {
+    val.id = cryptoId();
+    val.creeLe = new Date().toISOString();
+    STATE.taches.push(val);
+  }
+
+  scheduleSave();
+  tacheUI.formOuvert = null;
+  tacheUI.formPanel = null;
+  showToast(existing ? "Tâche modifiée" : "Tâche créée");
+  refreshTaches(scope, panel);
+});
+
+registerAction('tache-delete', el => {
+  const { scope, panel } = ctx(el);
+  const t = STATE.taches.find(x => x.id === el.dataset.id);
+  if(!t) return;
+  if(!confirmAction(`Supprimer la tâche « ${t.tache} » ?`)) return;
+  STATE.taches = STATE.taches.filter(x => x.id !== el.dataset.id);
+  if(tacheUI.formOuvert === el.dataset.id) tacheUI.formOuvert = null;
+  scheduleSave();
+  showToast("Tâche supprimée");
+  refreshTaches(scope, panel);
+});
+
+registerAction('tache-toggle', el => {
+  const { scope, panel } = ctx(el);
+  const t = STATE.taches.find(x => x.id === el.dataset.id);
+  if(!t) return;
+  t.statut = (t.statut === 'Fait') ? 'À faire' : 'Fait';
+  scheduleSave();
+  refreshTaches(scope, panel);
+});
+
+registerAction('tache-filter-statut', el => {
+  tacheUI.statut = el.value;
+  const { scope, panel } = ctx(el);
+  refreshTaches(scope, panel);
+});
+
+registerAction('tache-filter-projet', el => {
+  tacheUI.projet = el.value;
+  const { scope, panel } = ctx(el);
+  refreshTaches(scope, panel);
+});
+
+registerAction('tache-filter-membre', el => {
+  tacheUI.membre = el.value;
+  const { scope, panel } = ctx(el);
+  refreshTaches(scope, panel);
+});
+
+registerAction('tache-filter-reset', el => {
+  tacheUI.statut = 'Toutes';
+  tacheUI.projet = 'Tous';
+  tacheUI.membre = 'Tous';
+  tacheUI.recherche = '';
+  const { scope, panel } = ctx(el);
+  refreshTaches(scope, panel);
+});
+
+// La recherche re-rend la liste uniquement, pour ne pas voler le focus au champ.
+registerAction('tache-filter-search', el => {
+  tacheUI.recherche = el.value;
+  const { scope, panel } = ctx(el);
+  const pos = el.selectionStart;
+  refreshTaches(scope, panel);
+  const nouveau = document.querySelector(`[data-action="tache-filter-search"][data-panel="${panel}"]`);
+  if(nouveau){
+    nouveau.focus();
+    try{ nouveau.setSelectionRange(pos, pos); }catch(e){}
+  }
+});
+
+/* ==========================================================
+   PLANNING HEBDOMADAIRE
+   ========================================================== */
+let planningWeekOffset = 0;
+
+const JOURS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+
+function lundiDeLaSemaine(offset){
+  const today = new Date();
+  const jour = today.getDay();                 // 0 = dimanche
+  const decalage = (jour === 0) ? -6 : 1 - jour;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + decalage + (offset * 7));
+  monday.setHours(0,0,0,0);
+  return monday;
+}
+
+function renderPlanningAnnual(container){
+  if(!container) return;
+
+  const baseMonday = lundiDeLaSemaine(planningWeekOffset);
+  const weekDates = JOURS.map((_, i) => {
+    const d = new Date(baseMonday);
+    d.setDate(baseMonday.getDate() + i);
+    return d;
+  });
+  const weekDateStrs = weekDates.map(toLocalDateStr);
+  const aujourdhui = toLocalDateStr(new Date());
+
+  const weekNumber = getWeekNumber(baseMonday);
+  const year = baseMonday.getFullYear();
+
+  // Regroupement par jour, périodes multi-jours incluses.
+  const activitesParJour = weekDateStrs.map(dateStr =>
+    STATE.activites
+      .filter(a => {
+        if(a.statut === 'Annulée') return false;
+        if(!a.date) return false;
+        const fin = a.dateFin || a.date;
+        return a.date <= dateStr && fin >= dateStr;
+      })
+      .sort((a,b)=> (a.heureDebut || '99:99').localeCompare(b.heureDebut || '99:99'))
+  );
+
+  // Options de lieu groupées par catégorie.
+  const groupes = [
+    { label: 'Salles Réunion',            cat: 'reunion'   },
+    { label: 'Salles Métropole',          cat: 'metropole' },
+    { label: 'Établissements scolaires',  cat: 'scolaire'  }
+  ];
+  let lieuOptions = `<option value="">— Sélectionner un lieu —</option>`;
+  groupes.forEach(g => {
+    const items = STATE.salles.filter(s => s.categorie === g.cat);
+    if(!items.length) return;
+    lieuOptions += `<optgroup label="${esc(g.label)}">`;
+    items.forEach(s => { lieuOptions += `<option value="${esc(s.nom)}">${esc(s.nom)}</option>`; });
+    lieuOptions += `</optgroup>`;
+  });
+  lieuOptions += `<option value="__autre__">Autre (saisie libre)</option>`;
+
+  mount(container, `
+    <div class="planning-annual-wrapper">
+      <div class="row-head">
+        <h2>Planning</h2>
+        <span class="count-tag">${weekDateStrs.filter((_,i)=> activitesParJour[i].length).length} jour(s) occupé(s) cette semaine</span>
+      </div>
+
+      <div class="week-nav">
+        <button type="button" class="btn secondary small" data-action="planning-prev">◀ Semaine précédente</button>
+        <span class="week-label">Semaine ${weekNumber} · ${formatDate(weekDateStrs[0])} — ${formatDate(weekDateStrs[6])}</span>
+        <button type="button" class="btn secondary small" data-action="planning-next">Semaine suivante ▶</button>
+        <button type="button" class="btn small" data-action="planning-today">Aujourd'hui</button>
+        <span class="year-tag">${year}</span>
+      </div>
+
+      <div class="planning-annual-grid">
+        <div class="cell cell-header">Sem.</div>
+        ${JOURS.map((d, i) => `<div class="cell cell-header${(i>=5)?' weekend':''}">${d}</div>`).join('')}
+        <div class="cell week-number">${weekNumber}</div>
+        ${JOURS.map((d, idx) => {
+          const dateStr = weekDateStrs[idx];
+          const dayMonth = weekDates[idx].toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+          const isToday = dateStr === aujourdhui;
+          let inner = `<div class="day-date">${dayMonth}</div>`;
+          activitesParJour[idx].forEach(a => {
+            const multi = a.dateFin && a.dateFin !== a.date;
+            const heures = (a.heureDebut || a.heureFin)
+              ? `${esc(a.heureDebut || '')}${a.heureDebut && a.heureFin ? '–' : ''}${esc(a.heureFin || '')}`
+              : (a.duree ? esc(a.duree) : '');
+            inner += `<div class="slot${multi ? ' multi-day' : ''}" title="${esc(a.nom)}${a.lieu ? ' · ' + esc(a.lieu) : ''}"
+                        data-action="planning-open-activite" data-id="${esc(a.id)}">
+              ${esc(a.nom)}${multi ? ' 📅' : ''}
+              ${heures ? `<span class="heure">${heures}</span>` : ''}
+              <span class="remove" title="Retirer" data-action="planning-remove-activite" data-id="${esc(a.id)}">✕</span>
+            </div>`;
+          });
+          inner += `<button type="button" class="add-btn" title="Ajouter ce jour"
+                      data-action="planning-pick-day" data-day="${d}">+</button>`;
+          return `<div class="cell${(idx>=5)?' weekend':''}${isToday?' is-today':''}">${inner}</div>`;
+        }).join('')}
+      </div>
+
+      <div class="form-card">
+        <h3>Ajouter une activité ou une période</h3>
+        <div class="form-grid">
+          <label class="full">Nom <span class="req">*</span>
+            <input type="text" id="p-nom" placeholder="Ex : Résidence de création">
+          </label>
+          <label>Jour de début
+            <select id="p-day">${JOURS.map((d,i)=>`<option value="${d}">${d} ${formatDate(weekDateStrs[i]).slice(0,5)}</option>`).join('')}</select>
+          </label>
+          <label>Date de fin (si période)
+            <input type="date" id="p-date-fin">
+          </label>
+          <label>Type
+            <select id="p-type">${ACT_TYPES.map(t => `<option>${t}</option>`).join('')}</select>
+          </label>
+          <label>Lieu
+            <select id="p-lieu-salle" data-action="planning-lieu-change" data-on="change">${lieuOptions}</select>
+          </label>
+          <label id="p-lieu-custom-wrap" hidden>Lieu personnalisé
+            <input type="text" id="p-lieu-custom" placeholder="Nom du lieu">
+          </label>
+          <label>Heure de début
+            <input type="time" id="p-heure-debut">
+          </label>
+          <label>Heure de fin
+            <input type="time" id="p-heure-fin">
+          </label>
+          <label>Durée
+            <input type="text" id="p-duree" placeholder="Ex : 2:00">
+          </label>
+          <label>Responsable
+            <select id="p-responsable">${membreOptions('')}</select>
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn" data-action="planning-add">+ Ajouter au planning</button>
+          <span class="hint">Crée une activité « Prévue » visible dans l'onglet Activités.</span>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function refreshPlanning(){
+  const c = byId('planning-embed');
+  if(c) renderPlanningAnnual(c);
+}
+
+/* ---------- Actions ---------- */
+registerAction('planning-prev',  () => { planningWeekOffset--; refreshPlanning(); });
+registerAction('planning-next',  () => { planningWeekOffset++; refreshPlanning(); });
+registerAction('planning-today', () => { planningWeekOffset = 0; refreshPlanning(); });
+
+registerAction('planning-lieu-change', el => {
+  const wrap = byId('p-lieu-custom-wrap');
+  if(wrap) wrap.hidden = (el.value !== '__autre__');
+  if(el.value === '__autre__'){
+    const input = byId('p-lieu-custom');
+    if(input) input.focus();
+  }
+});
+
+registerAction('planning-pick-day', el => {
+  const sel = byId('p-day');
+  if(sel) sel.value = el.dataset.day;
+  const nom = byId('p-nom');
+  if(nom){ nom.focus(); nom.scrollIntoView({ behavior:'smooth', block:'center' }); }
+});
+
+registerAction('planning-remove-activite', el => {
+  const a = STATE.activites.find(x => x.id === el.dataset.id);
+  if(!a) return;
+  if(!confirmAction(`Retirer « ${a.nom} » du planning ?\nL'activité sera supprimée.`)) return;
+  STATE.activites = STATE.activites.filter(x => x.id !== el.dataset.id);
+  scheduleSave();
+  showToast("Activité retirée");
+  refreshPlanning();
+  if(panelIsActive('activites')) renderActivites();
+});
+
+registerAction('planning-open-activite', el => {
+  const a = STATE.activites.find(x => x.id === el.dataset.id);
+  if(!a) return;
+  activiteUI.formOuvert = a.id;
+  switchTab('activites');
+});
+
+registerAction('planning-add', () => {
+  const nom = byId('p-nom').value.trim();
+  if(!nom){ showToast("Donnez un nom à l'activité"); byId('p-nom').focus(); return; }
+
+  const day = byId('p-day').value;
+  const dayIndex = JOURS.indexOf(day);
+  if(dayIndex === -1) return;
+
+  const baseMonday = lundiDeLaSemaine(planningWeekOffset);
+  const dateObj = new Date(baseMonday);
+  dateObj.setDate(baseMonday.getDate() + dayIndex);
+  const dateStr = toLocalDateStr(dateObj);
+
+  const dateFin = byId('p-date-fin').value;
+  if(dateFin && dateFin < dateStr){
+    showToast("La date de fin précède la date de début");
+    return;
+  }
+
+  const heureDebut = byId('p-heure-debut').value;
+  const heureFin   = byId('p-heure-fin').value;
+  if(heureDebut && heureFin && heureFin < heureDebut && !dateFin){
+    showToast("L'heure de fin précède l'heure de début");
+    return;
+  }
+
+  const lieuSalle = byId('p-lieu-salle').value;
+  const lieuCustomVal = byId('p-lieu-custom').value.trim();
+  let lieu, lieuType = 'autre';
+  if(lieuSalle === '__autre__'){
+    lieu = lieuCustomVal || 'Lieu à définir';
+  } else if(lieuSalle){
+    lieu = lieuSalle;
+    const found = STATE.salles.find(s => s.nom === lieuSalle);
+    if(found) lieuType = found.categorie || 'autre';
+  } else {
+    lieu = 'Lieu à définir';
+  }
+
+  // Durée calculée automatiquement si les deux heures sont renseignées.
+  let duree = byId('p-duree').value.trim();
+  if(!duree && heureDebut && heureFin){
+    const [h1,m1] = heureDebut.split(':').map(Number);
+    const [h2,m2] = heureFin.split(':').map(Number);
+    const diff = (h2*60+m2) - (h1*60+m1);
+    if(diff > 0) duree = `${Math.floor(diff/60)}:${String(diff%60).padStart(2,'0')}`;
+  }
+
+  STATE.activites.push({
+    id: cryptoId(),
+    nom, date: dateStr, dateFin: dateFin || '',
+    type: byId('p-type').value,
+    lieu, lieuType,
+    lieuCustom: (lieuSalle === '__autre__') ? lieuCustomVal : '',
+    statut: 'Prévue',
+    participants: '', public: '',
+    duree, heureDebut, heureFin,
+    partenaires: '', responsable: byId('p-responsable').value,
+    fonctionne: '', difficultes: '', notes: '',
+    annee: dateStr.slice(0,4)
+  });
+
+  scheduleSave();
+  const periode = dateFin ? ` du ${formatDate(dateStr)} au ${formatDate(dateFin)}` : ` le ${formatDate(dateStr)}`;
+  showToast(`« ${nom} » ajouté${periode}`);
+
+  refreshPlanning();
+  if(panelIsActive('activites')) renderActivites();
+});
+
+/* ==========================================================
+   PROJETS
+   ========================================================== */
+let selectedProject = null;
+
+function renderProjets(){
+  const el = byId('projets');
+  if(!el) return;
+
+  const projets = projetsList();
+  if(!selectedProject || !projets.includes(selectedProject)) selectedProject = projets[0] || null;
+
+  mount(el, `
+    <div class="row-head">
+      <h2>Projets</h2>
+      <div class="head-right">
+        <button type="button" class="btn" data-action="projet-new">+ Nouveau projet</button>
+      </div>
+    </div>
+
+    ${projets.length ? `
+    <div class="sub-tabs" role="tablist">
+      ${projets.map(p => `
+        <button type="button" class="sub-tab ${selectedProject === p ? 'active' : ''}"
+                role="tab" aria-selected="${selectedProject === p}"
+                data-action="projet-select" data-projet="${esc(p)}">
+          ${esc(p)}
+          <span class="pill">${STATE.taches.filter(t => t.projet === p && t.statut !== 'Fait').length}</span>
+        </button>
+      `).join('')}
+    </div>` : ''}
+
+    <div id="projets-content"></div>
+  `);
+
+  const content = byId('projets-content');
+  if(!selectedProject){
+    mount(content, `<div class="empty">Aucun projet. Créez-en un avec « + Nouveau projet ».</div>`);
+    return;
+  }
+
+  const salles = STATE.salles.filter(s => (s.projets || []).includes(selectedProject));
+  const acts = STATE.activites.filter(a => a.nom && a.nom.toLowerCase().includes(selectedProject.toLowerCase()));
+  const taches = STATE.taches.filter(t => t.projet === selectedProject);
+  const faites = taches.filter(t => t.statut === 'Fait').length;
+  const pct = taches.length ? Math.round(faites / taches.length * 100) : 0;
+
+  mount(content, `
+    <div class="projet-head">
+      <div class="projet-actions">
+        <button type="button" class="btn small secondary" data-action="projet-rename" data-projet="${esc(selectedProject)}">Renommer</button>
+        <button type="button" class="btn small danger" data-action="projet-delete" data-projet="${esc(selectedProject)}">Supprimer le projet</button>
+      </div>
+      <div class="progress-wrap" title="${faites} tâche(s) terminée(s) sur ${taches.length}">
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <span class="progress-label">${pct}% · ${faites}/${taches.length} tâche(s)</span>
+      </div>
+    </div>
+
+    <div class="stats-grid compact">
+      <div class="stat"><div class="num">${taches.length - faites}</div><div class="label">Tâches en cours</div></div>
+      <div class="stat"><div class="num">${salles.length}</div><div class="label">Lieux associés</div></div>
+      <div class="stat"><div class="num">${acts.length}</div><div class="label">Activités liées</div></div>
+    </div>
+
+    <div id="projet-taches-content"></div>
+  `);
+
+  const panelId = 'projet-' + slugify(selectedProject);
+  renderTachesScope(selectedProject, byId('projet-taches-content'), panelId);
+}
+
+registerAction('projet-select', el => {
+  selectedProject = el.dataset.projet;
+  renderProjets();
+});
+
+registerAction('projet-new', () => {
+  const label = prompt("Nom du nouveau projet :");
+  if(!label || !label.trim()) return;
+  const nom = label.trim();
+  if(projetsList().includes(nom)){ showToast("Ce projet existe déjà"); return; }
+  STATE.projets.push(nom);
+  selectedProject = nom;
+  scheduleSave();
+  showToast(`Projet « ${nom} » créé`);
+  renderProjets();
+});
+
+registerAction('projet-rename', el => {
+  const ancien = el.dataset.projet;
+  const label = prompt("Nouveau nom du projet :", ancien);
+  if(!label || !label.trim()) return;
+  const nouveau = label.trim();
+  if(nouveau === ancien) return;
+  if(projetsList().includes(nouveau)){ showToast("Ce nom est déjà utilisé"); return; }
+
+  STATE.projets = STATE.projets.map(p => p === ancien ? nouveau : p);
+  STATE.taches.forEach(t => { if(t.projet === ancien) t.projet = nouveau; });
+  STATE.salles.forEach(s => {
+    s.projets = (s.projets || []).map(p => p === ancien ? nouveau : p);
+  });
+  if(tacheUI.projet === ancien) tacheUI.projet = nouveau;
+  selectedProject = nouveau;
+
+  scheduleSave();
+  showToast("Projet renommé");
+  renderProjets();
+});
+
+registerAction('projet-delete', el => {
+  const nom = el.dataset.projet;
+  const nbTaches = STATE.taches.filter(t => t.projet === nom).length;
+  const msg = nbTaches
+    ? `Supprimer le projet « ${nom} » ?\n${nbTaches} tâche(s) seront conservées mais détachées du projet.`
+    : `Supprimer le projet « ${nom} » ?`;
+  if(!confirmAction(msg)) return;
+
+  STATE.projets = STATE.projets.filter(p => p !== nom);
+  STATE.taches.forEach(t => { if(t.projet === nom) t.projet = ''; });
+  STATE.salles.forEach(s => { s.projets = (s.projets || []).filter(p => p !== nom); });
+  if(selectedProject === nom) selectedProject = null;
+  if(tacheUI.projet === nom) tacheUI.projet = 'Tous';
+
+  scheduleSave();
+  showToast("Projet supprimé");
+  renderProjets();
+});
+
+/* ==========================================================
+   LIEUX
+   ========================================================== */
+const CAT_LABELS = { reunion: 'Réunion', metropole: 'Métropole', scolaire: 'Scolaire' };
+
+const lieuUI = {
+  categorie: 'reunion',   // 'reunion' | 'metropole' | 'scolaire' | 'proj:<nom>'
+  statut: 'Toutes',
+  recherche: '',
+  formOuvert: null        // null | 'new' | id de la salle
+};
+
+function renderLieux(){
+  const el = byId('lieux');
+  if(!el) return;
+
+  const isProjetTab = String(lieuUI.categorie).startsWith('proj:');
+  const cats = ['reunion','metropole','scolaire'];
+
+  mount(el, `
+    <div class="row-head">
+      <h2>Lieux</h2>
+      <div class="head-right">
+        <span class="count-tag">${STATE.salles.length} lieu(x) au total</span>
+        <button type="button" class="btn" data-action="lieu-new">+ Nouveau lieu</button>
+      </div>
+    </div>
+
+    <div class="sub-tabs" role="tablist">
+      ${cats.map(cat => `
+        <button type="button" class="sub-tab ${lieuUI.categorie === cat ? 'active' : ''}"
+                role="tab" aria-selected="${lieuUI.categorie === cat}"
+                data-action="lieu-cat" data-cat="${cat}">
+          ${CAT_LABELS[cat]}
+          <span class="pill">${STATE.salles.filter(s => s.categorie === cat).length}</span>
+        </button>`).join('')}
+      ${projetsList().length ? `<span class="sub-tabs-sep" aria-hidden="true"></span>` : ''}
+      ${projetsList().map(p => `
+        <button type="button" class="sub-tab ${lieuUI.categorie === 'proj:'+p ? 'active' : ''}"
+                role="tab" aria-selected="${lieuUI.categorie === 'proj:'+p}"
+                data-action="lieu-cat" data-cat="proj:${esc(p)}">
+          🎭 ${esc(p)}
+          <span class="pill">${STATE.salles.filter(s => (s.projets||[]).includes(p)).length}</span>
+        </button>`).join('')}
+    </div>
+
+    <div id="lieux-content"></div>
+  `);
+
+  const content = byId('lieux-content');
+  if(isProjetTab){
+    renderSallesByProjet(lieuUI.categorie.slice(5), content);
+  } else {
+    renderSallesContent(lieuUI.categorie, content);
+  }
+}
+
+function renderSallesContent(catKey, container){
+  if(!container) return;
+
+  const recherche = lieuUI.recherche.toLowerCase().trim();
+  const salles = STATE.salles.filter(s => s.categorie === catKey);
+
+  const filtered = salles.filter(s => {
+    if(lieuUI.statut === '__none__' && s.statut) return false;
+    if(lieuUI.statut !== 'Toutes' && lieuUI.statut !== '__none__' && s.statut !== lieuUI.statut) return false;
+    if(recherche){
+      const foin = [s.nom, s.ville, s.responsable, s.prochaineAction,
+        ...(s.contactFields||[]).map(f => f.label + ' ' + f.value)].filter(Boolean).join(' ').toLowerCase();
+      if(!foin.includes(recherche)) return false;
+    }
+    return true;
+  });
+
+  filtered.sort((a,b)=> (a.dateRelance || '9999-99-99').localeCompare(b.dateRelance || '9999-99-99') || a.nom.localeCompare(b.nom));
+
+  const statutOpts = [
+    ['Toutes','Tous les statuts'], ['__none__','Sans statut'],
+    ['A contacter','A contacter'], ['En cours','En cours'],
+    ['Obtenu','Obtenu'], ['Refusé','Refusé']
+  ].map(([v,l]) => `<option value="${v}" ${lieuUI.statut===v?'selected':''}>${l}</option>`).join('');
+
+  mount(container, `
+    <div class="filters">
+      <input type="search" class="search-input" placeholder="Rechercher un lieu, une ville, un contact…"
+             value="${esc(lieuUI.recherche)}" aria-label="Rechercher un lieu"
+             data-action="lieu-search" data-on="input">
+      <select aria-label="Filtrer par statut" data-action="lieu-filter-statut" data-on="change">${statutOpts}</select>
+      <span class="count-tag">${filtered.length} / ${salles.length}</span>
+      ${(lieuUI.statut!=='Toutes' || lieuUI.recherche)
+        ? `<button type="button" class="btn small secondary" data-action="lieu-filter-reset">Réinitialiser</button>` : ''}
+    </div>
+
+    <div id="salle-form-slot"></div>
+
+    <div class="list">
+      ${filtered.length
+        ? filtered.map(s => salleItemHtml(s, null)).join('')
+        : `<div class="empty">${salles.length === 0
+            ? "Aucun lieu dans cette catégorie. Ajoutez-en un avec « + Nouveau lieu »."
+            : "Aucun lieu ne correspond à ces filtres."}</div>`}
+    </div>
+  `);
+
+  if(lieuUI.formOuvert) reopenSalleForm(catKey);
+}
+
+function renderSallesByProjet(projetName, container){
+  if(!container) return;
+  const salles = STATE.salles.filter(s => (s.projets || []).includes(projetName));
+  salles.sort((a,b)=> (a.dateRelance || '9999-99-99').localeCompare(b.dateRelance || '9999-99-99'));
+
+  mount(container, `
+    <div class="count-tag spaced">${salles.length} lieu(x) associé(s) au projet « ${esc(projetName)} »</div>
+    <div id="salle-form-slot"></div>
+    <div class="list">
+      ${salles.length
+        ? salles.map(s => salleItemHtml(s, CAT_LABELS[s.categorie] || s.categorie)).join('')
+        : `<div class="empty">Aucun lieu associé. Ouvrez un lieu dans Réunion / Métropole / Scolaire et cochez ce projet.</div>`}
+    </div>
+  `);
+
+  if(lieuUI.formOuvert) reopenSalleForm(null);
+}
+
+function salleItemHtml(s, categorieLabel){
+  const contacts = (s.contactFields || [])
+    .map(f => `<div class="contact-line"><span class="c-label">${esc(f.label)}</span> ${esc(f.value)}</div>`).join('');
+  const relanceProche = s.dateRelance && s.dateRelance <= toLocalDateStr(new Date());
+  return `
+    <div class="item ${statusClass('salle', s.statut)}">
+      <div class="main">
+        <div class="title">${esc(s.nom)}${s.ville ? ` <span class="ville">— ${esc(s.ville)}</span>` : ''}</div>
+        <div class="meta">
+          ${categorieLabel ? `<span>${esc(categorieLabel)}</span>` : ''}
+          ${s.responsable ? `<span>Suivi : ${esc(s.responsable)}</span>` : ''}
+          ${(s.projets||[]).length ? `<span>🎭 ${(s.projets||[]).map(esc).join(', ')}</span>` : ''}
+          <span class="status-label">${esc(s.statut || 'Sans statut')}</span>
+        </div>
+        ${contacts ? `<div class="desc contacts">${contacts}</div>` : ''}
+        ${s.prochaineAction
+          ? `<div class="desc ${relanceProche ? 'warn' : ''}">Prochaine action : ${esc(s.prochaineAction)}${
+              s.dateRelance ? ` (relance le ${formatDate(s.dateRelance)}${relanceProche ? ' ⚠' : ''})` : ''}</div>`
+          : ''}
+      </div>
+      <div class="actions">
+        <button type="button" class="btn small secondary" data-action="lieu-edit" data-id="${esc(s.id)}">Modifier</button>
+        <button type="button" class="btn small danger" data-action="lieu-delete" data-id="${esc(s.id)}">Suppr.</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- Formulaire de lieu ---------- */
+function reopenSalleForm(catKey){
+  const existing = lieuUI.formOuvert === 'new' ? null : STATE.salles.find(s => s.id === lieuUI.formOuvert);
+  if(lieuUI.formOuvert !== 'new' && !existing){ lieuUI.formOuvert = null; return; }
+  openSalleForm(existing, catKey, true);
+}
+
+function openSalleForm(existing, catKey, dejaOuvert){
+  const slot = byId('salle-form-slot');
+  if(!slot) return;
+
+  if(!dejaOuvert) lieuUI.formOuvert = existing ? existing.id : 'new';
+
+  const s = existing || {
+    nom:'', ville:'', statut:'', prochaineAction:'', dateRelance:'',
+    responsable:'', contactFields:[], projets:[],
+    categorie: catKey && !String(catKey).startsWith('proj:') ? catKey : 'reunion'
+  };
+
+  const fieldsHtml = (s.contactFields || []).map(f => contactRowHtml(f.label, f.value)).join('');
+
+  const statutOptions = ['', 'A contacter', 'En cours', 'Obtenu', 'Refusé'].map(st =>
+    `<option value="${st}" ${(s.statut || '') === st ? 'selected' : ''}>${st || 'Sans statut'}</option>`).join('');
+
+  const catOptions = Object.entries(CAT_LABELS).map(([k,l]) =>
+    `<option value="${k}" ${(s.categorie || 'reunion') === k ? 'selected' : ''}>${l}</option>`).join('');
+
+  mount(slot, `
+    <div class="form-card">
+      <h3>${existing ? 'Modifier le lieu' : 'Nouveau lieu'}</h3>
+      <div class="form-grid">
+        <label>Nom <span class="req">*</span>
+          <input type="text" id="f-nom-lieu" value="${esc(s.nom)}" placeholder="Nom du lieu">
+        </label>
+        <label>Ville
+          <input type="text" id="f-ville-lieu" value="${esc(s.ville)}">
+        </label>
+        <label>Catégorie
+          <select id="f-cat-lieu">${catOptions}</select>
+        </label>
+        <label>Statut
+          <select id="f-statut-lieu">${statutOptions}</select>
+        </label>
+        <label>Suivi par
+          <select id="f-responsable-lieu">${membreOptions(s.responsable)}</select>
+        </label>
+        <label>Date de relance
+          <input type="date" id="f-date-relance-lieu" value="${esc(s.dateRelance)}">
+        </label>
+        <label class="full">Prochaine action
+          <input type="text" id="f-prochaine-action-lieu" value="${esc(s.prochaineAction)}" placeholder="Ex : Envoyer le dossier artistique">
+        </label>
+
+        <div class="full">
+          <span class="field-legend">Contacts</span>
+          <div class="contact-fields-wrap" id="contact-fields-wrap">${fieldsHtml}</div>
+          <button type="button" class="add-contact-field" data-action="lieu-add-contact">+ Ajouter un contact</button>
+        </div>
+
+        <div class="full">
+          <span class="field-legend">Projets concernés</span>
+          <div class="checkbox-row">
+            ${projetsList().length
+              ? projetsList().map(p => `
+                <label class="cb">
+                  <input type="checkbox" class="f-projet-cb" value="${esc(p)}" ${(s.projets||[]).includes(p) ? 'checked' : ''}>
+                  ${esc(p)}
+                </label>`).join('')
+              : '<span class="hint">Aucun projet défini pour l\'instant.</span>'}
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn" data-action="lieu-save" data-id="${esc(existing ? existing.id : '')}">Enregistrer</button>
+        <button type="button" class="btn secondary" data-action="lieu-cancel">Annuler</button>
+      </div>
+    </div>
+  `);
+
+  const first = slot.querySelector('#f-nom-lieu');
+  if(first && !dejaOuvert) first.focus();
+}
+
+function contactRowHtml(label, value){
+  return `
+    <div class="contact-row">
+      <input type="text" class="c-label-input" placeholder="Fonction / nom" value="${esc(label || '')}">
+      <input type="text" class="c-value-input" placeholder="Email, téléphone…" value="${esc(value || '')}">
+      <button type="button" class="remove-field" title="Retirer ce contact" data-action="lieu-remove-contact">✕</button>
+    </div>
+  `;
+}
+
+/* ---------- Actions lieux ---------- */
+registerAction('lieu-cat', el => {
+  lieuUI.categorie = el.dataset.cat;
+  lieuUI.formOuvert = null;
+  renderLieux();
+});
+
+registerAction('lieu-search', el => {
+  lieuUI.recherche = el.value;
+  const pos = el.selectionStart;
+  renderLieux();
+  const nouveau = document.querySelector('[data-action="lieu-search"]');
+  if(nouveau){ nouveau.focus(); try{ nouveau.setSelectionRange(pos, pos); }catch(e){} }
+});
+
+registerAction('lieu-filter-statut', el => {
+  lieuUI.statut = el.value;
+  renderLieux();
+});
+
+registerAction('lieu-filter-reset', () => {
+  lieuUI.statut = 'Toutes';
+  lieuUI.recherche = '';
+  renderLieux();
+});
+
+registerAction('lieu-new', () => {
+  const cat = String(lieuUI.categorie).startsWith('proj:') ? 'reunion' : lieuUI.categorie;
+  openSalleForm(null, cat, false);
+  const slot = byId('salle-form-slot');
+  if(slot) slot.scrollIntoView({ behavior:'smooth', block:'nearest' });
+});
+
+registerAction('lieu-edit', el => {
+  const s = STATE.salles.find(x => x.id === el.dataset.id);
+  if(!s) return;
+  openSalleForm(s, s.categorie, false);
+  const slot = byId('salle-form-slot');
+  if(slot) slot.scrollIntoView({ behavior:'smooth', block:'nearest' });
+});
+
+registerAction('lieu-cancel', () => {
+  lieuUI.formOuvert = null;
+  renderLieux();
+});
+
+registerAction('lieu-add-contact', () => {
+  const wrap = byId('contact-fields-wrap');
+  if(!wrap) return;
+  const div = document.createElement('div');
+  div.innerHTML = contactRowHtml('', '');
+  const row = div.firstElementChild;
+  wrap.appendChild(row);
+  const input = row.querySelector('.c-label-input');
+  if(input) input.focus();
+});
+
+registerAction('lieu-remove-contact', el => {
+  const row = el.closest('.contact-row');
+  if(row) row.remove();
+});
+
+registerAction('lieu-save', el => {
+  const nomInput = byId('f-nom-lieu');
+  const nom = nomInput.value.trim();
+  if(!nom){ showToast("Donnez un nom au lieu"); nomInput.focus(); return; }
+
+  const contactFields = [];
+  document.querySelectorAll('#contact-fields-wrap .contact-row').forEach(row => {
+    const label = row.querySelector('.c-label-input').value.trim();
+    const value = row.querySelector('.c-value-input').value.trim();
+    // On garde la ligne dès qu'un des deux champs est rempli.
+    if(label || value) contactFields.push({ label, value });
+  });
+
+  const projets = Array.from(document.querySelectorAll('.f-projet-cb'))
+    .filter(cb => cb.checked).map(cb => cb.value);
+
+  const val = {
+    nom,
+    ville:           byId('f-ville-lieu').value.trim(),
+    categorie:       byId('f-cat-lieu').value,
+    statut:          byId('f-statut-lieu').value,
+    responsable:     byId('f-responsable-lieu').value,
+    dateRelance:     byId('f-date-relance-lieu').value,
+    prochaineAction: byId('f-prochaine-action-lieu').value.trim(),
+    contactFields,
+    projets
+  };
+
+  const existing = el.dataset.id ? STATE.salles.find(s => s.id === el.dataset.id) : null;
+  if(existing){
+    Object.assign(existing, val);
+  } else {
+    val.id = cryptoId();
+    STATE.salles.push(val);
+  }
+
+  scheduleSave();
+  lieuUI.formOuvert = null;
+  showToast(existing ? "Lieu modifié" : "Lieu créé");
+
+  // Si la catégorie a changé, on suit le lieu dans son nouvel onglet.
+  if(!String(lieuUI.categorie).startsWith('proj:')) lieuUI.categorie = val.categorie;
+  renderLieux();
+  if(panelIsActive('kanban-salles')) renderKanbanSalles();
+});
+
+registerAction('lieu-delete', el => {
+  const s = STATE.salles.find(x => x.id === el.dataset.id);
+  if(!s) return;
+  if(!confirmAction(`Supprimer le lieu « ${s.nom} » ?`)) return;
+
+  // Mémorise la suppression pour qu'un lieu pré-rempli ne réapparaisse pas au rechargement.
+  if(s.seed){
+    const cle = s.categorie + '::' + s.nom;
+    if(!STATE.meta.sallesSupprimees.includes(cle)) STATE.meta.sallesSupprimees.push(cle);
+  }
+
+  STATE.salles = STATE.salles.filter(x => x.id !== el.dataset.id);
+  if(lieuUI.formOuvert === s.id) lieuUI.formOuvert = null;
+  scheduleSave();
+  showToast("Lieu supprimé");
+  renderLieux();
+  if(panelIsActive('kanban-salles')) renderKanbanSalles();
+});
+
+/* ==========================================================
+   KANBAN SALLES
+   ========================================================== */
+const STATUTS_KANBAN = ['A contacter', 'En cours', 'Obtenu', 'Refusé', ''];
+
+const kanbanUI = { categorie: 'toutes', recherche: '' };
+
+function renderKanbanSalles(){
+  const el = byId('kanban-salles');
+  if(!el) return;
+
+  const recherche = kanbanUI.recherche.toLowerCase().trim();
+  const items = STATE.salles.filter(s => {
+    if(kanbanUI.categorie !== 'toutes' && s.categorie !== kanbanUI.categorie) return false;
+    if(recherche){
+      const foin = [s.nom, s.ville, s.responsable].filter(Boolean).join(' ').toLowerCase();
+      if(!foin.includes(recherche)) return false;
+    }
+    return true;
+  });
+
+  const catOpts = [
+    ['toutes','Toutes catégories'], ['reunion','Salles Réunion'],
+    ['metropole','Salles Métropole'], ['scolaire','Établissements scolaires']
+  ].map(([v,l]) => `<option value="${v}" ${kanbanUI.categorie===v?'selected':''}>${l}</option>`).join('');
+
+  mount(el, `
+    <div class="row-head">
+      <h2>Kanban Salles</h2>
+      <span class="count-tag">Glissez-déposez les cartes, ou utilisez le menu de chaque carte</span>
+    </div>
+
+    <div class="filters">
+      <input type="search" class="search-input" placeholder="Filtrer par nom, ville, responsable…"
+             value="${esc(kanbanUI.recherche)}" aria-label="Filtrer les salles"
+             data-action="kanban-search" data-on="input">
+      <select aria-label="Filtrer par catégorie" data-action="kanban-cat" data-on="change">${catOpts}</select>
+      <span class="count-tag">${items.length} carte(s)</span>
+    </div>
+
+    <div class="kanban-board">
+      ${STATUTS_KANBAN.map(st => {
+        const cartes = items.filter(s => (s.statut || '') === st);
+        return `
+        <div class="kanban-col" data-statut="${esc(st)}">
+          <h3>${st || 'Sans statut'} <span class="pill">${cartes.length}</span></h3>
+          <div class="kanban-items">
+            ${cartes.length ? cartes.map(s => kanbanCardHtml(s)).join('') : '<div class="kanban-empty">Aucune salle</div>'}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `);
+
+  attachKanbanDnD(el);
+}
+
+function kanbanCardHtml(s){
+  const opts = STATUTS_KANBAN.map(st =>
+    `<option value="${esc(st)}" ${(s.statut||'')===st?'selected':''}>${st || 'Sans statut'}</option>`).join('');
+  return `
+    <div class="kanban-item" draggable="true" data-id="${esc(s.id)}">
+      <div class="k-title">${esc(s.nom)}</div>
+      <div class="k-meta">${esc(s.ville || '')}${s.responsable ? ' · ' + esc(s.responsable) : ''}</div>
+      ${s.dateRelance ? `<div class="k-meta">Relance : ${formatDate(s.dateRelance)}</div>` : ''}
+      <select class="k-move" aria-label="Changer le statut de ${esc(s.nom)}"
+              data-action="kanban-set-statut" data-on="change" data-id="${esc(s.id)}">${opts}</select>
+    </div>
+  `;
+}
+
+/** Les listeners de glisser-déposer sont posés sur le conteneur fraîchement
+ *  créé à chaque rendu ; aucun risque d'accumulation. */
+function attachKanbanDnD(root){
+  root.querySelectorAll('.kanban-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', item.dataset.id);
+      item.classList.add('dragging');
+    });
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+      root.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+    });
+  });
+
+  root.querySelectorAll('.kanban-col').forEach(col => {
+    col.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+    col.addEventListener('dragenter', e => { e.preventDefault(); col.classList.add('drag-over'); });
+    col.addEventListener('dragleave', e => {
+      // Ne retire le surlignage que si le curseur quitte réellement la colonne.
+      if(!col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+    });
+    col.addEventListener('drop', e => {
+      e.preventDefault();
+      col.classList.remove('drag-over');
+      const id = e.dataTransfer.getData('text/plain');
+      changerStatutSalle(id, col.dataset.statut);
+    });
+  });
+}
+
+function changerStatutSalle(id, nouveauStatut){
+  if(!id) return;
+  const salle = STATE.salles.find(s => s.id === id);
+  if(!salle) return;
+  if((salle.statut || '') === nouveauStatut) return;
+  salle.statut = nouveauStatut;
+  scheduleSave();
+  showToast(`« ${salle.nom} » → ${nouveauStatut || 'Sans statut'}`);
+  renderKanbanSalles();
+  if(panelIsActive('lieux')) renderLieux();
+}
+
+registerAction('kanban-set-statut', el => changerStatutSalle(el.dataset.id, el.value));
+
+registerAction('kanban-cat', el => {
+  kanbanUI.categorie = el.value;
+  renderKanbanSalles();
+});
+
+registerAction('kanban-search', el => {
+  kanbanUI.recherche = el.value;
+  const pos = el.selectionStart;
+  renderKanbanSalles();
+  const nouveau = document.querySelector('[data-action="kanban-search"]');
+  if(nouveau){ nouveau.focus(); try{ nouveau.setSelectionRange(pos, pos); }catch(e){} }
+});
+
+/* ==========================================================
+   ACTIVITÉS
+   ========================================================== */
+const ACT_TYPES = ['Répétition','Spectacle','Atelier','Réunion','Autre'];
+const ACT_STATUTS = ['Prévue','Réalisée','Annulée'];
+
+const activiteUI = { type: 'Tous', statut: 'Tous', recherche: '', formOuvert: null };
+
+function renderActivites(){
+  const el = byId('activites');
+  if(!el) return;
+
+  const recherche = activiteUI.recherche.toLowerCase().trim();
+  let filtered = STATE.activites.filter(a => {
+    if(activiteUI.type !== 'Tous' && a.type !== activiteUI.type) return false;
+    if(activiteUI.statut !== 'Tous' && a.statut !== activiteUI.statut) return false;
+    if(recherche){
+      const foin = [a.nom, a.lieu, a.responsable, a.partenaires, a.notes].filter(Boolean).join(' ').toLowerCase();
+      if(!foin.includes(recherche)) return false;
+    }
+    return true;
+  });
+  filtered.sort((a,b)=> (b.date || '').localeCompare(a.date || ''));
+
+  const statutOpts = ['Tous', ...ACT_STATUTS]
+    .map(s => `<option value="${esc(s)}" ${activiteUI.statut===s?'selected':''}>${s}</option>`).join('');
+
+  mount(el, `
+    <div class="row-head">
+      <h2>Activités</h2>
+      <div class="head-right">
+        <span class="count-tag">${filtered.length} / ${STATE.activites.length}</span>
+        <button type="button" class="btn" data-action="activite-new">+ Nouvelle activité</button>
+      </div>
+    </div>
+
+    <div class="sub-tabs" role="tablist">
+      ${['Tous', ...ACT_TYPES].map(t => `
+        <button type="button" class="sub-tab ${activiteUI.type === t ? 'active' : ''}"
+                role="tab" aria-selected="${activiteUI.type === t}"
+                data-action="activite-type" data-type="${esc(t)}">
+          ${t}
+          <span class="pill">${t==='Tous' ? STATE.activites.length : STATE.activites.filter(a=>a.type===t).length}</span>
+        </button>`).join('')}
+    </div>
+
+    <div class="filters">
+      <input type="search" class="search-input" placeholder="Rechercher une activité, un lieu…"
+             value="${esc(activiteUI.recherche)}" aria-label="Rechercher une activité"
+             data-action="activite-search" data-on="input">
+      <select aria-label="Filtrer par statut" data-action="activite-filter-statut" data-on="change">${statutOpts}</select>
+      ${(activiteUI.statut!=='Tous' || activiteUI.recherche || activiteUI.type!=='Tous')
+        ? `<button type="button" class="btn small secondary" data-action="activite-filter-reset">Réinitialiser</button>` : ''}
+    </div>
+
+    <div id="activite-form-slot"></div>
+
+    <div class="list">
+      ${filtered.length
+        ? filtered.map(activiteItemHtml).join('')
+        : `<div class="empty">${STATE.activites.length === 0
+            ? "Aucune activité. Créez-en une ici ou depuis le planning."
+            : "Aucune activité ne correspond à ces filtres."}</div>`}
+    </div>
+  `);
+
+  if(activiteUI.formOuvert){
+    const existing = activiteUI.formOuvert === 'new'
+      ? null : STATE.activites.find(a => a.id === activiteUI.formOuvert);
+    if(activiteUI.formOuvert === 'new' || existing) openActiviteForm(existing, true);
+    else activiteUI.formOuvert = null;
+  }
+}
+
+function activiteItemHtml(a){
+  const horaire = (a.heureDebut || a.heureFin)
+    ? `${esc(a.heureDebut||'')}${a.heureDebut && a.heureFin ? '–' : ''}${esc(a.heureFin||'')}` : '';
+  const periode = (a.dateFin && a.dateFin !== a.date) ? ` → ${formatDate(a.dateFin)}` : '';
+  return `
+    <div class="item ${statusClass('activite', a.statut)}">
+      <div class="main">
+        <div class="title">${esc(a.nom)}</div>
+        <div class="meta">
+          ${a.date ? `<span>${formatDate(a.date)}${periode}</span>` : ''}
+          ${horaire ? `<span>${horaire}</span>` : ''}
+          <span>${esc(a.type)}</span>
+          ${a.lieu ? `<span>${esc(a.lieu)}</span>` : ''}
+          ${a.duree ? `<span>Durée : ${esc(a.duree)}</span>` : ''}
+          ${a.participants ? `<span>${esc(a.participants)} participant(s)</span>` : ''}
+          ${a.public ? `<span>${esc(a.public)} personne(s) touchée(s)</span>` : ''}
+          ${a.responsable ? `<span>Responsable : ${esc(a.responsable)}</span>` : ''}
+          <span class="status-label">${esc(a.statut)}</span>
+        </div>
+        ${a.notes ? `<div class="desc">${esc(a.notes)}</div>` : ''}
+      </div>
+      <div class="actions">
+        <button type="button" class="btn small secondary" data-action="activite-edit" data-id="${esc(a.id)}">Modifier</button>
+        <button type="button" class="btn small danger" data-action="activite-delete" data-id="${esc(a.id)}">Suppr.</button>
+      </div>
+    </div>
+  `;
+}
+
+function openActiviteForm(existing, dejaOuvert){
+  const slot = byId('activite-form-slot');
+  if(!slot) return;
+
+  if(!dejaOuvert) activiteUI.formOuvert = existing ? existing.id : 'new';
+
+  const a = existing || {
+    nom:'', date: toLocalDateStr(new Date()), dateFin:'', type:'Répétition',
+    lieu:'', lieuType:'autre', lieuCustom:'', statut:'Prévue',
+    participants:'', public:'', duree:'', heureDebut:'', heureFin:'',
+    partenaires:'', responsable:'', fonctionne:'', difficultes:'', notes:'',
+    annee: String(new Date().getFullYear())
+  };
+
+  // Liste réelle des salles, plus un choix libre.
+  const groupes = [
+    { label: 'Salles Réunion',           cat: 'reunion'   },
+    { label: 'Salles Métropole',         cat: 'metropole' },
+    { label: 'Établissements scolaires', cat: 'scolaire'  }
+  ];
+  const connu = STATE.salles.some(s => s.nom === a.lieu);
+  let lieuOptions = `<option value="">— Aucun —</option>`;
+  groupes.forEach(g => {
+    const items = STATE.salles.filter(s => s.categorie === g.cat);
+    if(!items.length) return;
+    lieuOptions += `<optgroup label="${esc(g.label)}">`;
+    items.forEach(s => {
+      lieuOptions += `<option value="${esc(s.nom)}" ${a.lieu === s.nom ? 'selected' : ''}>${esc(s.nom)}</option>`;
+    });
+    lieuOptions += `</optgroup>`;
+  });
+  const libreSelected = (a.lieu && !connu) ? 'selected' : '';
+  lieuOptions += `<option value="__autre__" ${libreSelected}>Autre (saisie libre)</option>`;
+
+  mount(slot, `
+    <div class="form-card">
+      <h3>${existing ? "Modifier l'activité" : 'Nouvelle activité'}</h3>
+      <div class="form-grid">
+        <label class="full">Nom <span class="req">*</span>
+          <input type="text" id="f-nom-act" value="${esc(a.nom)}" placeholder="Ex : Répétition Studio A">
+        </label>
+        <label>Date de début
+          <input type="date" id="f-date-act" value="${esc(a.date)}">
+        </label>
+        <label>Date de fin (si période)
+          <input type="date" id="f-date-fin-act" value="${esc(a.dateFin)}">
+        </label>
+        <label>Type
+          <select id="f-type-act">${ACT_TYPES.map(t=>`<option ${a.type===t?'selected':''}>${t}</option>`).join('')}</select>
+        </label>
+        <label>Statut
+          <select id="f-statut-act">${ACT_STATUTS.map(s=>`<option ${a.statut===s?'selected':''}>${s}</option>`).join('')}</select>
+        </label>
+        <label>Lieu
+          <select id="f-lieu-act" data-action="activite-lieu-change" data-on="change">${lieuOptions}</select>
+        </label>
+        <label id="f-lieu-custom-wrap" ${libreSelected ? '' : 'hidden'}>Lieu personnalisé
+          <input type="text" id="f-lieu-custom-act" value="${esc(connu ? a.lieuCustom : a.lieu)}" placeholder="Nom du lieu">
+        </label>
+        <label>Heure de début
+          <input type="time" id="f-heure-debut-act" value="${esc(a.heureDebut)}">
+        </label>
+        <label>Heure de fin
+          <input type="time" id="f-heure-fin-act" value="${esc(a.heureFin)}">
+        </label>
+        <label>Durée
+          <input type="text" id="f-duree-act" value="${esc(a.duree)}" placeholder="Ex : 2:00">
+        </label>
+        <label>Participants
+          <input type="number" id="f-participants-act" value="${esc(a.participants)}" min="0" placeholder="0">
+        </label>
+        <label>Public touché
+          <input type="number" id="f-public-act" value="${esc(a.public)}" min="0" placeholder="0">
+        </label>
+        <label>Responsable
+          <select id="f-responsable-act">${membreOptions(a.responsable)}</select>
+        </label>
+        <label>Partenaires
+          <input type="text" id="f-partenaires-act" value="${esc(a.partenaires)}">
+        </label>
+        <label class="full">Ce qui a fonctionné
+          <textarea id="f-fonctionne-act" rows="2">${esc(a.fonctionne)}</textarea>
+        </label>
+        <label class="full">Difficultés / points à améliorer
+          <textarea id="f-difficultes-act" rows="2">${esc(a.difficultes)}</textarea>
+        </label>
+        <label class="full">Notes / observations
+          <textarea id="f-notes-act" rows="2">${esc(a.notes)}</textarea>
+        </label>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn" data-action="activite-save" data-id="${esc(existing ? existing.id : '')}">Enregistrer</button>
+        <button type="button" class="btn secondary" data-action="activite-cancel">Annuler</button>
+      </div>
+    </div>
+  `);
+
+  const first = slot.querySelector('#f-nom-act');
+  if(first && !dejaOuvert) first.focus();
+}
+
+/* ---------- Actions ---------- */
+registerAction('activite-new', () => {
+  openActiviteForm(null, false);
+  const slot = byId('activite-form-slot');
+  if(slot) slot.scrollIntoView({ behavior:'smooth', block:'nearest' });
+});
+
+registerAction('activite-edit', el => {
+  const a = STATE.activites.find(x => x.id === el.dataset.id);
+  if(!a) return;
+  openActiviteForm(a, false);
+  const slot = byId('activite-form-slot');
+  if(slot) slot.scrollIntoView({ behavior:'smooth', block:'nearest' });
+});
+
+registerAction('activite-cancel', () => {
+  activiteUI.formOuvert = null;
+  renderActivites();
+});
+
+registerAction('activite-lieu-change', el => {
+  const wrap = byId('f-lieu-custom-wrap');
+  if(wrap) wrap.hidden = (el.value !== '__autre__');
+  if(el.value === '__autre__'){
+    const input = byId('f-lieu-custom-act');
+    if(input) input.focus();
+  }
+});
+
+registerAction('activite-save', el => {
+  const nomInput = byId('f-nom-act');
+  const nom = nomInput.value.trim();
+  if(!nom){ showToast("Donnez un nom à l'activité"); nomInput.focus(); return; }
+
+  const date = byId('f-date-act').value;
+  const dateFin = byId('f-date-fin-act').value;
+  if(dateFin && date && dateFin < date){ showToast("La date de fin précède la date de début"); return; }
+
+  const heureDebut = byId('f-heure-debut-act').value;
+  const heureFin = byId('f-heure-fin-act').value;
+  if(heureDebut && heureFin && !dateFin && heureFin < heureDebut){
+    showToast("L'heure de fin précède l'heure de début"); return;
+  }
+
+  const lieuSel = byId('f-lieu-act').value;
+  const lieuCustom = byId('f-lieu-custom-act').value.trim();
+  let lieu = '', lieuType = 'autre';
+  if(lieuSel === '__autre__'){
+    lieu = lieuCustom;
+  } else if(lieuSel){
+    lieu = lieuSel;
+    const found = STATE.salles.find(s => s.nom === lieuSel);
+    if(found) lieuType = found.categorie || 'autre';
+  }
+
+  let duree = byId('f-duree-act').value.trim();
+  if(!duree && heureDebut && heureFin){
+    const [h1,m1] = heureDebut.split(':').map(Number);
+    const [h2,m2] = heureFin.split(':').map(Number);
+    const diff = (h2*60+m2) - (h1*60+m1);
+    if(diff > 0) duree = `${Math.floor(diff/60)}:${String(diff%60).padStart(2,'0')}`;
+  }
+
+  const val = {
+    nom, date, dateFin: dateFin || '',
+    type:         byId('f-type-act').value,
+    statut:       byId('f-statut-act').value,
+    lieu, lieuType,
+    lieuCustom:   (lieuSel === '__autre__') ? lieuCustom : '',
+    heureDebut, heureFin, duree,
+    participants: byId('f-participants-act').value,
+    public:       byId('f-public-act').value,
+    responsable:  byId('f-responsable-act').value,
+    partenaires:  byId('f-partenaires-act').value.trim(),
+    fonctionne:   byId('f-fonctionne-act').value.trim(),
+    difficultes:  byId('f-difficultes-act').value.trim(),
+    notes:        byId('f-notes-act').value.trim(),
+    annee:        date ? date.slice(0,4) : String(new Date().getFullYear())
+  };
+
+  const existing = el.dataset.id ? STATE.activites.find(a => a.id === el.dataset.id) : null;
+  if(existing) Object.assign(existing, val);
+  else { val.id = cryptoId(); STATE.activites.push(val); }
+
+  scheduleSave();
+  activiteUI.formOuvert = null;
+  showToast(existing ? "Activité modifiée" : "Activité créée");
+  renderActivites();
+  refreshPlanning();
+});
+
+registerAction('activite-delete', el => {
+  const a = STATE.activites.find(x => x.id === el.dataset.id);
+  if(!a) return;
+  if(!confirmAction(`Supprimer l'activité « ${a.nom} » ?`)) return;
+  STATE.activites = STATE.activites.filter(x => x.id !== el.dataset.id);
+  if(activiteUI.formOuvert === a.id) activiteUI.formOuvert = null;
+  scheduleSave();
+  showToast("Activité supprimée");
+  renderActivites();
+  refreshPlanning();
+});
+
+registerAction('activite-type', el => {
+  activiteUI.type = el.dataset.type;
+  renderActivites();
+});
+
+registerAction('activite-filter-statut', el => {
+  activiteUI.statut = el.value;
+  renderActivites();
+});
+
+registerAction('activite-filter-reset', () => {
+  activiteUI.type = 'Tous';
+  activiteUI.statut = 'Tous';
+  activiteUI.recherche = '';
+  renderActivites();
+});
+
+registerAction('activite-search', el => {
+  activiteUI.recherche = el.value;
+  const pos = el.selectionStart;
+  renderActivites();
+  const nouveau = document.querySelector('[data-action="activite-search"]');
+  if(nouveau){ nouveau.focus(); try{ nouveau.setSelectionRange(pos, pos); }catch(e){} }
+});
+
+/* ==========================================================
+   BILAN
+   ========================================================== */
+let bilanYear = null;
+
+function renderBilan(){
+  const el = byId('bilan');
+  if(!el) return;
+
+  const years = Array.from(new Set(STATE.activites.map(a => a.annee).filter(Boolean))).sort().reverse();
+  const anneeCourante = String(new Date().getFullYear());
+  if(!years.includes(anneeCourante)) years.unshift(anneeCourante);
+  if(!bilanYear || !years.includes(bilanYear)) bilanYear = years[0];
+
+  mount(el, `
+    <div class="row-head">
+      <h2>Bilan</h2>
+      <select aria-label="Année du bilan" data-action="bilan-year" data-on="change">
+        ${years.map(y => `<option ${y===bilanYear?'selected':''}>${y}</option>`).join('')}
+      </select>
+    </div>
+
+    <div id="bilan-content"></div>
+
+    <div class="bilan-detailed">
+      <h3>Bilan détaillé sur une période</h3>
+      <div class="filters">
+        <label class="inline-label">Du <input type="date" id="bilan-start" value="${bilanYear}-01-01"></label>
+        <label class="inline-label">Au <input type="date" id="bilan-end" value="${bilanYear}-12-31"></label>
+        <button type="button" class="btn" data-action="bilan-generate">Générer</button>
+        <button type="button" class="btn secondary" data-action="bilan-export-csv">Exporter en CSV</button>
+      </div>
+      <div id="bilan-detailed-result"></div>
+    </div>
+  `);
+
+  renderBilanContent(bilanYear);
+}
+
+function renderBilanContent(year){
+  const el = byId('bilan-content');
+  if(!el) return;
+
+  const acts = STATE.activites.filter(a => (a.annee || '') === year);
+  const realisees = acts.filter(a => a.statut === 'Réalisée');
+  const prevues = acts.filter(a => a.statut === 'Prévue');
+  const annulees = acts.filter(a => a.statut === 'Annulée');
+
+  const totalParticipants = realisees.reduce((s,a) => s + (parseInt(a.participants,10) || 0), 0);
+  const totalPublic = realisees.reduce((s,a) => s + (parseInt(a.public,10) || 0), 0);
+  const totalMinutes = realisees.reduce((s,a) => s + dureeEnMinutes(a.duree), 0);
+
+  const byType = {};
+  realisees.forEach(a => { byType[a.type] = (byType[a.type] || 0) + 1; });
+
+  const sallesObtenues = STATE.salles.filter(s => s.statut === 'Obtenu').length;
+  const tachesOuvertes = STATE.taches.filter(t => t.statut !== 'Fait').length;
+
+  mount(el, `
+    <div class="stats-grid">
+      <div class="stat"><div class="num">${realisees.length}</div><div class="label">Activités réalisées</div></div>
+      <div class="stat"><div class="num">${totalParticipants}</div><div class="label">Participants cumulés</div></div>
+      <div class="stat"><div class="num">${totalPublic}</div><div class="label">Public touché</div></div>
+      <div class="stat"><div class="num">${formatMinutes(totalMinutes)}</div><div class="label">Durée cumulée</div></div>
+      <div class="stat"><div class="num">${sallesObtenues}</div><div class="label">Salles obtenues</div></div>
+      <div class="stat"><div class="num">${tachesOuvertes}</div><div class="label">Tâches en cours</div></div>
+    </div>
+
+    <div class="bilan-section">
+      <h3>Répartition par type</h3>
+      ${Object.keys(byType).length
+        ? `<div class="repartition">${Object.entries(byType).sort((a,b)=>b[1]-a[1]).map(([t,n])=>{
+            const pct = Math.round(n / realisees.length * 100);
+            return `<div class="rep-row">
+              <span class="rep-label">${esc(t)}</span>
+              <span class="rep-bar"><span class="rep-fill" style="width:${pct}%"></span></span>
+              <span class="rep-num">${n}</span>
+            </div>`;
+          }).join('')}</div>`
+        : '<div class="empty">Aucune activité réalisée cette année.</div>'}
+    </div>
+
+    <div class="bilan-section">
+      <h3>Suivi des statuts</h3>
+      <div class="meta spread">
+        <span>Prévues : ${prevues.length}</span>
+        <span>Réalisées : ${realisees.length}</span>
+        <span>Annulées : ${annulees.length}</span>
+      </div>
+    </div>
+
+    <div class="bilan-section">
+      <h3>Ce qui a fonctionné</h3>
+      ${realisees.filter(a=>a.fonctionne).length
+        ? realisees.filter(a=>a.fonctionne).map(a => `<div class="quote-block"><strong>${esc(a.nom)}</strong> — ${esc(a.fonctionne)}</div>`).join('')
+        : '<div class="empty">Rien de noté pour l\'instant.</div>'}
+    </div>
+
+    <div class="bilan-section">
+      <h3>Difficultés &amp; points à améliorer</h3>
+      ${realisees.filter(a=>a.difficultes).length
+        ? realisees.filter(a=>a.difficultes).map(a => `<div class="quote-block"><strong>${esc(a.nom)}</strong> — ${esc(a.difficultes)}</div>`).join('')
+        : '<div class="empty">Rien de noté pour l\'instant.</div>'}
+    </div>
+  `);
+}
+
+function activitesSurPeriode(start, end){
+  return STATE.activites.filter(a => {
+    if(!a.date) return false;
+    const fin = a.dateFin || a.date;
+    return a.date <= end && fin >= start;
+  }).sort((a,b) => (a.date || '').localeCompare(b.date || ''));
+}
+
+function generateDetailedBilan(start, end){
+  const resultDiv = byId('bilan-detailed-result');
+  if(!resultDiv) return;
+
+  const activities = activitesSurPeriode(start, end);
+  if(activities.length === 0){
+    mount(resultDiv, `<div class="empty">Aucune activité sur cette période.</div>`);
+    return;
+  }
+
+  const byType = {}, byLieu = {}, byResponsable = {};
+  let totalParticipants = 0, totalPublic = 0, totalMinutes = 0;
+
+  activities.forEach(a => {
+    byType[a.type] = (byType[a.type] || 0) + 1;
+    byLieu[a.lieu || 'Non défini'] = (byLieu[a.lieu || 'Non défini'] || 0) + 1;
+    if(a.responsable) byResponsable[a.responsable] = (byResponsable[a.responsable] || 0) + 1;
+    totalParticipants += parseInt(a.participants,10) || 0;
+    totalPublic += parseInt(a.public,10) || 0;
+    totalMinutes += dureeEnMinutes(a.duree);
+  });
+
+  const listeHtml = obj => Object.entries(obj).sort((a,b)=>b[1]-a[1])
+    .map(([k,n]) => `<div class="meta">${esc(k)} : <strong>${n}</strong></div>`).join('');
+
+  mount(resultDiv, `
+    <div class="bilan-result">
+      <h4>Du ${formatDate(start)} au ${formatDate(end)}</h4>
+      <div class="stats-grid">
+        <div class="stat"><div class="num">${activities.length}</div><div class="label">Activités</div></div>
+        <div class="stat"><div class="num">${totalParticipants}</div><div class="label">Participants</div></div>
+        <div class="stat"><div class="num">${totalPublic}</div><div class="label">Public touché</div></div>
+        <div class="stat"><div class="num">${formatMinutes(totalMinutes)}</div><div class="label">Durée totale</div></div>
+      </div>
+
+      <div class="repartition-cols">
+        <div><h4>Par type</h4>${listeHtml(byType)}</div>
+        <div><h4>Par lieu</h4>${listeHtml(byLieu)}</div>
+        ${Object.keys(byResponsable).length ? `<div><h4>Par responsable</h4>${listeHtml(byResponsable)}</div>` : ''}
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Date</th><th>Nom</th><th>Type</th><th>Lieu</th>
+            <th>Part.</th><th>Public</th><th>Durée</th><th>Statut</th><th>Responsable</th>
+          </tr></thead>
+          <tbody>
+            ${activities.map(a => `
+              <tr>
+                <td>${formatDate(a.date)}${a.dateFin && a.dateFin !== a.date ? ' → ' + formatDate(a.dateFin) : ''}</td>
+                <td>${esc(a.nom)}</td>
+                <td>${esc(a.type)}</td>
+                <td>${esc(a.lieu || '')}</td>
+                <td>${esc(a.participants || '')}</td>
+                <td>${esc(a.public || '')}</td>
+                <td>${esc(a.duree || '')}</td>
+                <td>${esc(a.statut)}</td>
+                <td>${esc(a.responsable || '')}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `);
+}
+
+registerAction('bilan-year', el => {
+  bilanYear = el.value;
+  renderBilanContent(bilanYear);
+  const s = byId('bilan-start'), e = byId('bilan-end');
+  if(s) s.value = `${bilanYear}-01-01`;
+  if(e) e.value = `${bilanYear}-12-31`;
+});
+
+registerAction('bilan-generate', () => {
+  const start = byId('bilan-start').value;
+  const end = byId('bilan-end').value;
+  if(!start || !end){ showToast("Sélectionnez une période complète"); return; }
+  if(end < start){ showToast("La date de fin précède la date de début"); return; }
+  generateDetailedBilan(start, end);
+});
+
+registerAction('bilan-export-csv', () => {
+  const start = byId('bilan-start').value;
+  const end = byId('bilan-end').value;
+  if(!start || !end){ showToast("Sélectionnez une période complète"); return; }
+
+  const activities = activitesSurPeriode(start, end);
+  if(!activities.length){ showToast("Aucune activité sur cette période"); return; }
+
+  const champ = v => {
+    const s = String(v === undefined || v === null ? '' : v);
+    return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const lignes = [
+    ['Date début','Date fin','Nom','Type','Lieu','Participants','Public','Durée','Statut','Responsable','Partenaires','Notes'],
+    ...activities.map(a => [
+      a.date, a.dateFin || '', a.nom, a.type, a.lieu || '',
+      a.participants || '', a.public || '', a.duree || '',
+      a.statut, a.responsable || '', a.partenaires || '', a.notes || ''
+    ])
+  ];
+  // Point-virgule et BOM : ouverture directe dans Excel en français.
+  const csv = '\uFEFF' + lignes.map(l => l.map(champ).join(';')).join('\r\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cie3-bilan-${start}_${end}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
+  showToast('Export CSV téléchargé');
+});
+
+/* ==========================================================
+   MEMBRES
+   ========================================================== */
+let selectedMemberId = null;
+let membreFormOuvert = null;   // null | 'new' | id du membre
+
+function renderMembres(){
+  const el = byId('membres');
+  if(!el) return;
+
+  mount(el, `
+    <div class="row-head">
+      <h2>Membres</h2>
+      <div class="head-right">
+        <span class="count-tag">${STATE.membres.length} membre(s)</span>
+        <button type="button" class="btn" data-action="membre-new">+ Nouveau membre</button>
+      </div>
+    </div>
+
+    <div id="membre-form-slot"></div>
+
+    <div class="members-list">
+      ${STATE.membres.length ? STATE.membres.map(m => {
+        const nom = memberName(m);
+        const taches = STATE.taches.filter(t => t.responsable === nom);
+        const ouvertes = taches.filter(t => t.statut !== 'Fait').length;
+        return `
+        <div class="member-row ${selectedMemberId === m.id ? 'is-selected' : ''}">
+          <div>
+            <div class="m-name">${esc(nom)}</div>
+            <div class="m-role">${esc(m.role || '')}</div>
+          </div>
+          <div class="m-actions">
+            <span class="count-tag">${ouvertes} tâche(s) en cours</span>
+            <button type="button" class="btn small secondary" data-action="membre-tasks" data-id="${esc(m.id)}">
+              ${selectedMemberId === m.id ? 'Masquer' : 'Voir ses tâches'}
+            </button>
+            <button type="button" class="btn small secondary" data-action="membre-edit" data-id="${esc(m.id)}">Modifier</button>
+            <button type="button" class="btn small danger" data-action="membre-delete" data-id="${esc(m.id)}">Suppr.</button>
+          </div>
+        </div>`;
+      }).join('') : '<div class="empty">Aucun membre. Ajoutez les personnes de la compagnie pour pouvoir leur attribuer des tâches.</div>'}
+    </div>
+
+    <div class="member-tasks-section">
+      <h3>Tâches par membre</h3>
+      <div id="member-tasks-content">
+        ${selectedMemberId
+          ? renderTasksForMember(selectedMemberId)
+          : '<div class="empty">Cliquez sur « Voir ses tâches » pour afficher le détail.</div>'}
+      </div>
+    </div>
+  `);
+
+  if(membreFormOuvert){
+    const existing = membreFormOuvert === 'new' ? null : STATE.membres.find(m => m.id === membreFormOuvert);
+    if(membreFormOuvert === 'new' || existing) openMembreForm(existing, true);
+    else membreFormOuvert = null;
+  }
+}
+
+function renderTasksForMember(memberId){
+  const m = STATE.membres.find(x => x.id === memberId);
+  if(!m) return '<div class="empty">Membre introuvable.</div>';
+  const nom = memberName(m);
+
+  const tasks = STATE.taches.filter(t => t.responsable === nom);
+  if(tasks.length === 0){
+    return `<div class="empty">Aucune tâche attribuée à ${esc(nom)}.</div>`;
+  }
+
+  const stats = { 'À faire':0, 'En cours':0, 'Fait':0 };
+  tasks.forEach(t => { if(stats[t.statut] !== undefined) stats[t.statut]++; });
+
+  tasks.sort((a,b)=>{
+    const r = (a.statut === 'Fait' ? 1 : 0) - (b.statut === 'Fait' ? 1 : 0);
+    if(r !== 0) return r;
+    return (a.dateLimite || '9999-99-99').localeCompare(b.dateLimite || '9999-99-99');
+  });
+
+  return `
+    <div class="member-tasks-head"><strong>${esc(nom)}</strong> — ${tasks.length} tâche(s)</div>
+    <div class="task-stats">
+      <span class="task-stat-a-faire">À faire : ${stats['À faire']}</span>
+      <span class="task-stat-en-cours">En cours : ${stats['En cours']}</span>
+      <span class="task-stat-fait">Fait : ${stats['Fait']}</span>
+    </div>
+    <div class="member-tasks-list">
+      ${tasks.map(t => {
+        const retard = estEnRetard(t);
+        return `
+        <div class="item ${statusClass('tache', t.statut)} ${retard ? 'is-late' : ''}">
+          <div class="main">
+            <div class="title">${esc(t.tache)}</div>
+            <div class="meta">
+              ${t.projet ? `<span>Projet : ${esc(t.projet)}</span>` : ''}
+              ${t.dateLimite ? `<span class="${retard ? 'warn' : ''}">Échéance : ${formatDate(t.dateLimite)}${retard ? ' ⚠' : ''}</span>` : ''}
+              ${t.priorite ? `<span>Priorité : ${esc(t.priorite)}</span>` : ''}
+              <span class="status-label">${esc(t.statut)}</span>
+            </div>
+            ${t.description ? `<div class="desc">${esc(t.description)}</div>` : ''}
+            ${t.commentaire ? `<div class="desc note">💬 ${esc(t.commentaire)}</div>` : ''}
+          </div>
+          <div class="actions">
+            <button type="button" class="btn small secondary" data-action="membre-task-toggle" data-id="${esc(t.id)}">
+              ${t.statut === 'Fait' ? 'Rouvrir' : 'Marquer fait'}
+            </button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function openMembreForm(existing, dejaOuvert){
+  const slot = byId('membre-form-slot');
+  if(!slot) return;
+
+  if(!dejaOuvert) membreFormOuvert = existing ? existing.id : 'new';
+  const m = existing || { prenom:'', nom:'', role:'' };
+
+  mount(slot, `
+    <div class="form-card">
+      <h3>${existing ? 'Modifier le membre' : 'Nouveau membre'}</h3>
+      <div class="form-grid">
+        <label>Prénom <input type="text" id="f-prenom-m" value="${esc(m.prenom)}"></label>
+        <label>Nom <input type="text" id="f-nom-m" value="${esc(m.nom)}"></label>
+        <label class="full">Rôle <input type="text" id="f-role-m" value="${esc(m.role)}" placeholder="Ex : Chorégraphe, interprète"></label>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn" data-action="membre-save" data-id="${esc(existing ? existing.id : '')}">Enregistrer</button>
+        <button type="button" class="btn secondary" data-action="membre-cancel">Annuler</button>
+      </div>
+    </div>
+  `);
+
+  const first = slot.querySelector('#f-prenom-m');
+  if(first && !dejaOuvert) first.focus();
+}
+
+/* ---------- Actions ---------- */
+registerAction('membre-new', () => openMembreForm(null, false));
+
+registerAction('membre-edit', el => {
+  const m = STATE.membres.find(x => x.id === el.dataset.id);
+  if(m) openMembreForm(m, false);
+});
+
+registerAction('membre-cancel', () => {
+  membreFormOuvert = null;
+  renderMembres();
+});
+
+registerAction('membre-save', el => {
+  const prenom = byId('f-prenom-m').value.trim();
+  const nom = byId('f-nom-m').value.trim();
+  const role = byId('f-role-m').value.trim();
+  if(!prenom && !nom){ showToast("Indiquez au moins un prénom ou un nom"); return; }
+
+  const existing = el.dataset.id ? STATE.membres.find(m => m.id === el.dataset.id) : null;
+
+  if(existing){
+    const ancienNom = memberName(existing);
+    Object.assign(existing, { prenom, nom, role });
+    const nouveauNom = memberName(existing);
+    // Répercute le changement de nom sur les tâches et activités liées.
+    if(ancienNom !== nouveauNom){
+      STATE.taches.forEach(t => { if(t.responsable === ancienNom) t.responsable = nouveauNom; });
+      STATE.activites.forEach(a => { if(a.responsable === ancienNom) a.responsable = nouveauNom; });
+      STATE.salles.forEach(s => { if(s.responsable === ancienNom) s.responsable = nouveauNom; });
+      if(tacheUI.membre === ancienNom) tacheUI.membre = nouveauNom;
+    }
+  } else {
+    STATE.membres.push({ id: cryptoId(), prenom, nom, role });
+  }
+
+  scheduleSave();
+  membreFormOuvert = null;
+  showToast(existing ? "Membre modifié" : "Membre ajouté");
+  renderMembres();
+});
+
+registerAction('membre-delete', el => {
+  const m = STATE.membres.find(x => x.id === el.dataset.id);
+  if(!m) return;
+  const nom = memberName(m);
+  const nbTaches = STATE.taches.filter(t => t.responsable === nom).length;
+  const msg = nbTaches
+    ? `Supprimer ${nom} ?\n${nbTaches} tâche(s) resteront mais sans responsable.`
+    : `Supprimer ${nom} ?`;
+  if(!confirmAction(msg)) return;
+
+  STATE.taches.forEach(t => { if(t.responsable === nom) t.responsable = ''; });
+  STATE.membres = STATE.membres.filter(x => x.id !== m.id);
+  if(selectedMemberId === m.id) selectedMemberId = null;
+  if(membreFormOuvert === m.id) membreFormOuvert = null;
+  if(tacheUI.membre === nom) tacheUI.membre = 'Tous';
+
+  scheduleSave();
+  showToast("Membre supprimé");
+  renderMembres();
+});
+
+registerAction('membre-tasks', el => {
+  selectedMemberId = (selectedMemberId === el.dataset.id) ? null : el.dataset.id;
+  renderMembres();
+});
+
+registerAction('membre-task-toggle', el => {
+  const t = STATE.taches.find(x => x.id === el.dataset.id);
+  if(!t) return;
+  t.statut = (t.statut === 'Fait') ? 'À faire' : 'Fait';
+  scheduleSave();
+  showToast(`« ${t.tache} » ${t.statut === 'Fait' ? 'terminée' : 'rouverte'}`);
+  renderMembres();
+});
+
+/* ==========================================================
+   INITIALISATION
+   ========================================================== */
+async function init(){
+  try{
+    await loadState();
+
+    // Un premier lancement sans données ouvre l'accueil ; sinon on reprend
+    // le dernier onglet consulté.
+    const dernier = STATE.meta && STATE.meta.dernierOnglet;
+    activeTabId = (dernier && STATE.tabs.some(t => t.id === dernier)) ? dernier : STATE.tabs[0].id;
+
+    rebuildPanels();
+    renderTabs();
+    switchTab(activeTabId);
+
+    updateSaveIndicator(STATE.meta.derniereSauvegarde ? 'saved' : 'pending');
+
+    if(!HAS_CLOUD_STORAGE){
+      const bandeau = byId('storage-note');
+      if(bandeau){
+        bandeau.hidden = false;
+        bandeau.textContent = "Les données sont enregistrées dans ce navigateur uniquement. Pensez à exporter une sauvegarde régulièrement.";
+      }
+    }
+  }catch(err){
+    showErrorBanner((err && err.stack) ? err.stack : String(err));
+  }
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+</script>
+</body>
+</html>
